@@ -16,6 +16,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useLocalAuth } from "@/components/auth/use-local-auth";
 import type { Course, Lesson } from "@/lib/academy-data";
 import { cn } from "@/lib/utils";
 import { useAcademyProgress } from "./use-academy-progress";
@@ -30,6 +31,8 @@ const courseIcons = {
 export function CourseDetail({ course }: { course: Course }) {
   const { completedCount, firstAvailableLesson, isLessonComplete } =
     useAcademyProgress();
+  const { currentUser } = useLocalAuth();
+  const isAuthenticated = Boolean(currentUser);
   const completed = completedCount(course);
   const availableLessons = course.lessons.length;
   const progress = Math.round((completed / availableLessons) * 100);
@@ -72,7 +75,9 @@ export function CourseDetail({ course }: { course: Course }) {
                     : "bg-[#eee8ff] text-[#30108f] hover:bg-[#eee8ff]"
                 )}
               >
-                {completed} of {availableLessons} complete
+                {isAuthenticated
+                  ? `${completed} of ${availableLessons} complete`
+                  : `${availableLessons} available modules`}
               </Badge>
               <h1 className="text-3xl font-semibold tracking-normal">
                 {course.title}
@@ -80,15 +85,17 @@ export function CourseDetail({ course }: { course: Course }) {
               <p className="mt-2 max-w-2xl text-base leading-7 text-[#625b75]">
                 {course.description}
               </p>
-              <div className="mt-5 h-3 overflow-hidden rounded-full bg-[#e7e3ef]">
-                <div
-                  className={cn(
-                    "h-full rounded-full",
-                    isGold ? "bg-[#f6ad00]" : "bg-[#4a22d4]"
-                  )}
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
+              {isAuthenticated && (
+                <div className="mt-5 h-3 overflow-hidden rounded-full bg-[#e7e3ef]">
+                  <div
+                    className={cn(
+                      "h-full rounded-full",
+                      isGold ? "bg-[#f6ad00]" : "bg-[#4a22d4]"
+                    )}
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+              )}
             </div>
 
             <Button
@@ -96,11 +103,15 @@ export function CourseDetail({ course }: { course: Course }) {
               className="h-12 rounded-lg bg-[#4720d5] px-5 text-white shadow-lg shadow-[#4720d5]/20 hover:bg-[#3513b3]"
             >
               <Link
-                href={`/courses/${course.id}/lessons/${
-                  firstAvailableLesson(course).id
-                }`}
+                href={
+                  isAuthenticated
+                    ? `/courses/${course.id}/lessons/${
+                        firstAvailableLesson(course).id
+                      }`
+                    : "/login"
+                }
               >
-                Continue
+                {isAuthenticated ? "Continue" : "Register"}
                 <ArrowRight className="size-4" />
               </Link>
             </Button>
@@ -121,8 +132,11 @@ export function CourseDetail({ course }: { course: Course }) {
             {course.lessons.map((lesson, index) => {
               const previousLessons = course.lessons.slice(0, index);
               const isUnlocked =
-                lesson.status !== "locked" ||
-                previousLessons.every((item) => isLessonComplete(course.id, item));
+                isAuthenticated &&
+                (lesson.status !== "locked" ||
+                  previousLessons.every((item) =>
+                    isLessonComplete(course.id, item)
+                  ));
 
               return (
                 <LessonRow
@@ -130,8 +144,11 @@ export function CourseDetail({ course }: { course: Course }) {
                   course={course}
                   lesson={lesson}
                   lessonNumber={index + 1}
-                  isComplete={isLessonComplete(course.id, lesson)}
+                  isComplete={
+                    isAuthenticated && isLessonComplete(course.id, lesson)
+                  }
                   isUnlocked={isUnlocked}
+                  isAuthenticated={isAuthenticated}
                 />
               );
             })}
@@ -148,12 +165,14 @@ function LessonRow({
   lessonNumber,
   isComplete,
   isUnlocked,
+  isAuthenticated,
 }: {
   course: Course;
   lesson: Lesson;
   lessonNumber: number;
   isComplete: boolean;
   isUnlocked: boolean;
+  isAuthenticated: boolean;
 }) {
   return (
     <Card className="rounded-xl border-white bg-white py-0 shadow-md shadow-[#24133f]/6">
@@ -163,14 +182,14 @@ function LessonRow({
             "flex size-11 items-center justify-center rounded-lg font-semibold",
             isComplete
               ? "bg-[#e8f8ef] text-[#118347]"
-              : !isUnlocked
+              : !isAuthenticated || !isUnlocked
                 ? "bg-[#f0edf5] text-[#8b849a]"
                 : "bg-[#eee8ff] text-[#30108f]"
           )}
         >
           {isComplete ? (
             <CheckCircle2 className="size-5" />
-          ) : !isUnlocked ? (
+          ) : !isAuthenticated || !isUnlocked ? (
             <Lock className="size-5" />
           ) : (
             lessonNumber
@@ -195,15 +214,20 @@ function LessonRow({
         </div>
 
         <Button
-          asChild={isUnlocked}
-          disabled={!isUnlocked}
+          asChild={isAuthenticated ? isUnlocked : true}
+          disabled={isAuthenticated && !isUnlocked}
           variant={isComplete ? "outline" : "default"}
           className={cn(
             "h-10 rounded-lg",
             !isComplete && isUnlocked && "bg-[#4720d5] text-white hover:bg-[#3513b3]"
           )}
         >
-          {isUnlocked ? (
+          {!isAuthenticated ? (
+            <Link href="/login">
+              Register
+              <PlayCircle className="size-4" />
+            </Link>
+          ) : isUnlocked ? (
             <Link href={`/courses/${course.id}/lessons/${lesson.id}`}>
               {isComplete ? "Review" : "Start"}
               <PlayCircle className="size-4" />

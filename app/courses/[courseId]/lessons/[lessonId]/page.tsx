@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import { AuthGate } from "@/components/auth/auth-gate";
 import { LessonCard } from "@/components/academy/lesson-card";
 import { courses, getLesson } from "@/lib/academy-data";
 
@@ -24,5 +25,9 @@ export default async function LessonPage({
     notFound();
   }
 
-  return <LessonCard course={course} lesson={lesson} />;
+  return (
+    <AuthGate>
+      <LessonCard course={course} lesson={lesson} />
+    </AuthGate>
+  );
 }

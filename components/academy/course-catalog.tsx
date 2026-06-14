@@ -13,6 +13,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useLocalAuth } from "@/components/auth/use-local-auth";
 import type { Course } from "@/lib/academy-data";
 import { cn } from "@/lib/utils";
 import { useAcademyProgress } from "./use-academy-progress";
@@ -26,6 +27,8 @@ const courseIcons = {
 
 export function CourseCatalog({ courses }: { courses: Course[] }) {
   const { completedCount, firstAvailableLesson } = useAcademyProgress();
+  const { currentUser } = useLocalAuth();
+  const isAuthenticated = Boolean(currentUser);
 
   return (
     <main className="min-h-screen bg-[#f7f6fb] px-5 py-6 text-[#100d24] sm:px-8 lg:px-10">
@@ -59,8 +62,9 @@ export function CourseCatalog({ courses }: { courses: Course[] }) {
             <CatalogCourseCard
               key={course.id}
               course={course}
-              completedLessons={completedCount(course)}
+              completedLessons={isAuthenticated ? completedCount(course) : undefined}
               nextLessonId={firstAvailableLesson(course).id}
+              isAuthenticated={isAuthenticated}
             />
           ))}
         </section>
@@ -73,15 +77,20 @@ function CatalogCourseCard({
   course,
   completedLessons,
   nextLessonId,
+  isAuthenticated,
 }: {
   course: Course;
-  completedLessons: number;
+  completedLessons?: number;
   nextLessonId: string;
+  isAuthenticated: boolean;
 }) {
   const Icon = courseIcons[course.icon];
   const isGold = course.tone === "gold";
   const availableLessons = course.lessons.length;
-  const progress = Math.round((completedLessons / availableLessons) * 100);
+  const progress =
+    typeof completedLessons === "number"
+      ? Math.round((completedLessons / availableLessons) * 100)
+      : 0;
 
   return (
     <Card className="rounded-xl border-white bg-white py-0 shadow-lg shadow-[#24133f]/8">
@@ -105,7 +114,9 @@ function CatalogCourseCard({
                 : "bg-[#eee8ff] text-[#30108f] hover:bg-[#eee8ff]"
             )}
           >
-            {completedLessons} / {availableLessons}
+            {typeof completedLessons === "number"
+              ? `${completedLessons} / ${availableLessons}`
+              : `${availableLessons} modules`}
           </Badge>
         </div>
 
@@ -118,21 +129,27 @@ function CatalogCourseCard({
           </p>
         </div>
 
-        <div className="mt-6">
-          <div className="mb-2 flex items-center justify-between text-sm font-medium text-[#625b75]">
-            <span>Progress</span>
-            <span>{progress}%</span>
+        {isAuthenticated ? (
+          <div className="mt-6">
+            <div className="mb-2 flex items-center justify-between text-sm font-medium text-[#625b75]">
+              <span>Progress</span>
+              <span>{progress}%</span>
+            </div>
+            <div className="h-3 overflow-hidden rounded-full bg-[#e7e3ef]">
+              <div
+                className={cn(
+                  "h-full rounded-full",
+                  isGold ? "bg-[#f6ad00]" : "bg-[#4a22d4]"
+                )}
+                style={{ width: `${progress}%` }}
+              />
+            </div>
           </div>
-          <div className="h-3 overflow-hidden rounded-full bg-[#e7e3ef]">
-            <div
-              className={cn(
-                "h-full rounded-full",
-                isGold ? "bg-[#f6ad00]" : "bg-[#4a22d4]"
-              )}
-              style={{ width: `${progress}%` }}
-            />
+        ) : (
+          <div className="mt-6 rounded-lg bg-[#f7f6fb] px-4 py-3 text-sm leading-6 text-[#625b75]">
+            Create an account to save progress and unlock lesson completion.
           </div>
-        </div>
+        )}
 
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
           <Button
@@ -149,8 +166,14 @@ function CatalogCourseCard({
             asChild
             className="h-11 rounded-lg bg-[#4720d5] text-white hover:bg-[#3513b3]"
           >
-            <Link href={`/courses/${course.id}/lessons/${nextLessonId}`}>
-              Continue
+            <Link
+              href={
+                isAuthenticated
+                  ? `/courses/${course.id}/lessons/${nextLessonId}`
+                  : "/login"
+              }
+            >
+              {isAuthenticated ? "Continue" : "Register"}
               <ArrowRight className="size-4" />
             </Link>
           </Button>

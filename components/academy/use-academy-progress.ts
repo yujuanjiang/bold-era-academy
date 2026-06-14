@@ -1,90 +1,105 @@
 "use client";
 
-import { useMemo, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState } from "react";
 
+import { useLocalAuth } from "@/components/auth/use-local-auth";
 import type { Course, Lesson } from "@/lib/academy-data";
+import { supabase } from "@/lib/supabase-client";
 
-const storageKey = "bold-era-academy-progress-v1";
-const emptyProgressJson = JSON.stringify({ completedLessonIds: [] });
-const progressUpdatedEvent = "bold-era-academy-progress-updated";
-
-type StoredProgress = {
-  completedLessonIds: string[];
+type LessonProgressRow = {
+  course_id: string;
+  lesson_id: string;
 };
 
 function lessonKey(courseId: string, lessonId: string) {
   return `${courseId}:${lessonId}`;
 }
 
-function readProgress(): StoredProgress {
-  if (typeof window === "undefined") {
-    return { completedLessonIds: [] };
-  }
+export function useAcademyProgress() {
+  const { currentUser } = useLocalAuth();
+  const [completedLessonIds, setCompletedLessonIds] = useState<string[]>([]);
 
-  try {
-    const stored = window.localStorage.getItem(storageKey);
-    if (!stored) {
-      return { completedLessonIds: [] };
+  useEffect(() => {
+    if (!supabase || !currentUser) {
+      return;
     }
 
-    const parsed = JSON.parse(stored) as Partial<StoredProgress>;
-    return {
-      completedLessonIds: Array.isArray(parsed.completedLessonIds)
-        ? parsed.completedLessonIds
-        : [],
+    let isMounted = true;
+
+    supabase
+      .from("lesson_progress")
+      .select("course_id, lesson_id")
+      .eq("user_id", currentUser.id)
+      .then(({ data, error }) => {
+        if (!isMounted) {
+          return;
+        }
+
+        if (error) {
+          setCompletedLessonIds([]);
+          return;
+        }
+
+        const completedKeys = ((data ?? []) as LessonProgressRow[]).map((row) =>
+          lessonKey(row.course_id, row.lesson_id)
+        );
+
+        setCompletedLessonIds(completedKeys);
+      });
+
+    return () => {
+      isMounted = false;
     };
-  } catch {
-    return { completedLessonIds: [] };
-  }
-}
-
-function getProgressSnapshot() {
-  if (typeof window === "undefined") {
-    return emptyProgressJson;
-  }
-
-  return window.localStorage.getItem(storageKey) ?? emptyProgressJson;
-}
-
-function subscribeToProgress(callback: () => void) {
-  window.addEventListener("storage", callback);
-  window.addEventListener(progressUpdatedEvent, callback);
-
-  return () => {
-    window.removeEventListener("storage", callback);
-    window.removeEventListener(progressUpdatedEvent, callback);
-  };
-}
-
-function writeProgress(progress: StoredProgress) {
-  window.localStorage.setItem(storageKey, JSON.stringify(progress));
-  window.dispatchEvent(new Event(progressUpdatedEvent));
-}
-
-export function useAcademyProgress() {
-  const progressJson = useSyncExternalStore(
-    subscribeToProgress,
-    getProgressSnapshot,
-    () => emptyProgressJson
-  );
-  const progress = useMemo(() => readProgressJson(progressJson), [progressJson]);
+  }, [currentUser]);
 
   const completedLessonKeys = useMemo(
-    () => new Set(progress.completedLessonIds),
-    [progress.completedLessonIds]
+    () => new Set(completedLessonIds),
+    [completedLessonIds]
   );
 
-  function completeLesson(courseId: string, lessonId: string) {
-    const nextCompleted = new Set(readProgress().completedLessonIds);
-    nextCompleted.add(lessonKey(courseId, lessonId));
+  async function completeLesson(courseId: string, lessonId: string) {
+    if (!supabase || !currentUser) {
+      return;
+    }
 
-    writeProgress({
-      completedLessonIds: Array.from(nextCompleted),
-    });
+    const key = lessonKey(courseId, lessonId);
+    setCompletedLessonIds((current) =>
+      current.includes(key) ? current : [...current, key]
+    );
+
+    const { error } = await supabase.from("lesson_progress").upsert(
+      {
+        user_id: currentUser.id,
+        course_id: courseId,
+        lesson_id: lessonId,
+        completed_at: new Date().toISOString(),
+      },
+      {
+        onConflict: "user_id,course_id,lesson_id",
+      }
+    );
+
+    if (error) {
+      setCompletedLessonIds((current) => current.filter((item) => item !== key));
+    }
   }
 
-  function resetProgress() {
-    writeProgress({ completedLessonIds: [] });
+  async function resetProgress() {
+    if (!supabase || !currentUser) {
+      return;
+    }
+
+    const previousCompletedLessonIds = completedLessonIds;
+    setCompletedLessonIds([]);
+
+    const { error } = await supabase
+      .from("lesson_progress")
+      .delete()
+      .eq("user_id", currentUser.id);
+
+    if (error) {
+      setCompletedLessonIds(previousCompletedLessonIds);
+    }
   }
 
   function isLessonComplete(courseId: string, lesson: Lesson) {
@@ -113,17 +128,4 @@ export function useAcademyProgress() {
     completedCount,
     firstAvailableLesson,
   };
-}
-
-function readProgressJson(progressJson: string): StoredProgress {
-  try {
-    const parsed = JSON.parse(progressJson) as Partial<StoredProgress>;
-    return {
-      completedLessonIds: Array.isArray(parsed.completedLessonIds)
-        ? parsed.completedLessonIds
-        : [],
-    };
-  } catch {
-    return { completedLessonIds: [] };
-  }
 }
