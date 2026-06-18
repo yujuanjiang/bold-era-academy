@@ -43,6 +43,17 @@ function authUserFromSession(session: Session | null): AuthUser | null {
   };
 }
 
+function sessionWithVerifiedUser(session: Session | null, user: User | null) {
+  if (!session || !user) {
+    return null;
+  }
+
+  return {
+    ...session,
+    user,
+  };
+}
+
 export function useLocalAuth() {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(Boolean(supabase));
@@ -52,20 +63,54 @@ export function useLocalAuth() {
       return;
     }
 
+    const client = supabase;
     let isMounted = true;
 
-    supabase.auth.getSession().then(({ data }) => {
-      if (isMounted) {
-        setSession(data.session);
+    Promise.all([client.auth.getSession(), client.auth.getUser()]).then(
+      async ([sessionResult, userResult]) => {
+        if (!isMounted) {
+          return;
+        }
+
+        if (userResult.error || !userResult.data.user) {
+          await client.auth.signOut();
+          setSession(null);
+          setIsLoading(false);
+          return;
+        }
+
+        setSession(
+          sessionWithVerifiedUser(
+            sessionResult.data.session,
+            userResult.data.user
+          )
+        );
         setIsLoading(false);
       }
-    });
+    );
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      setSession(nextSession);
-      setIsLoading(false);
+    } = client.auth.onAuthStateChange(async (_event, nextSession) => {
+      if (isMounted) {
+        if (!nextSession) {
+          setSession(null);
+          setIsLoading(false);
+          return;
+        }
+
+        const { data, error } = await client.auth.getUser();
+
+        if (error || !data.user) {
+          await client.auth.signOut();
+          setSession(null);
+          setIsLoading(false);
+          return;
+        }
+
+        setSession(sessionWithVerifiedUser(nextSession, data.user));
+        setIsLoading(false);
+      }
     });
 
     return () => {
