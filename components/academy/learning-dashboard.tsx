@@ -63,21 +63,19 @@ export function LearningDashboard({ courses }: { courses: Course[] }) {
               Learn
             </a>
             {isAuthenticated && (
-              <>
-                <a
-                  className="rounded-md px-3 py-1.5 hover:bg-white/70"
-                  href="#courses"
-                >
-                  Practice
-                </a>
-                <a
-                  className="rounded-md px-3 py-1.5 hover:bg-white/70"
-                  href="#courses"
-                >
-                  Progress
-                </a>
-              </>
+              <a
+                className="rounded-md px-3 py-1.5 hover:bg-white/70"
+                href="#courses"
+              >
+                My Progress
+              </a>
             )}
+            <Link
+              className="rounded-md px-3 py-1.5 hover:bg-white/70"
+              href="/courses"
+            >
+              Explore More
+            </Link>
           </nav>
 
           <div className="flex items-center gap-3">
