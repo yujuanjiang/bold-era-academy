@@ -11,6 +11,21 @@ npm run dev
 
 Open `http://localhost:3000`.
 
+## iOS Development
+
+This app is configured for a Capacitor iOS build. Next.js exports static web
+assets into `out/`, and Capacitor copies those assets into the native iOS
+project.
+
+```bash
+npm install
+npm run ios:build
+npm run ios:open
+```
+
+In Xcode, choose your Apple development team, update signing if needed, then run
+the `App` target on a simulator or device.
+
 ## Supabase Setup
 
 1. Create a Supabase project.

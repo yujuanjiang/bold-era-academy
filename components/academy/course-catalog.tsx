@@ -10,13 +10,14 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+import { MobileTabBar } from "@/components/academy/mobile-tab-bar";
+import { useAcademyProgress } from "@/components/academy/use-academy-progress";
+import { useLocalAuth } from "@/components/auth/use-local-auth";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useLocalAuth } from "@/components/auth/use-local-auth";
 import type { Course } from "@/lib/academy-data";
 import { cn } from "@/lib/utils";
-import { useAcademyProgress } from "./use-academy-progress";
 
 const courseIcons = {
   brain: Brain,
@@ -31,33 +32,30 @@ export function CourseCatalog({ courses }: { courses: Course[] }) {
   const isAuthenticated = Boolean(currentUser);
 
   return (
-    <main className="min-h-screen bg-[#f7f6fb] px-5 py-6 text-[#100d24] sm:px-8 lg:px-10">
-      <div className="mx-auto max-w-6xl">
-        <Button
-          asChild
-          variant="ghost"
-          className="mb-5 text-[#4b4264] hover:bg-[#ede8ff] hover:text-[#30108f]"
-        >
-          <Link href="/">
-            <ArrowLeft className="size-4" />
-            Dashboard
-          </Link>
-        </Button>
+    <main className="min-h-dvh bg-[#f5f5f7] pb-[calc(5.25rem+env(safe-area-inset-bottom))] pt-[env(safe-area-inset-top)] text-[#1c1c1e] md:pb-0">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <header className="sticky top-0 z-30 -mx-4 border-b border-black/6 bg-[#f5f5f7]/86 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+          <div className="grid min-h-11 grid-cols-[2.75rem_1fr_2.75rem] items-center">
+            <Button
+              asChild
+              variant="ghost"
+              size="icon-lg"
+              className="rounded-lg text-[#0a66d1] hover:bg-white"
+            >
+              <Link href="/" aria-label="Back to Today">
+                <ArrowLeft className="size-5" />
+              </Link>
+            </Button>
+            <div className="text-center">
+              <p className="text-[1.05rem] font-semibold">Courses</p>
+              <p className="text-xs font-medium text-[#6e6e73]">
+                {courses.length} learning paths
+              </p>
+            </div>
+          </div>
+        </header>
 
-        <section className="mb-8">
-          <Badge className="mb-4 rounded-lg bg-[#eee8ff] text-[#30108f] hover:bg-[#eee8ff]">
-            Course catalog
-          </Badge>
-          <h1 className="text-4xl font-semibold tracking-normal">
-            All AI courses
-          </h1>
-          <p className="mt-3 max-w-2xl text-base leading-7 text-[#625b75]">
-            Browse every available Bold Era Academy learning path and continue
-            from the next open lesson.
-          </p>
-        </section>
-
-        <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <section className="grid gap-4 py-5 sm:grid-cols-2 lg:grid-cols-3">
           {courses.map((course) => (
             <CatalogCourseCard
               key={course.id}
@@ -69,6 +67,7 @@ export function CourseCatalog({ courses }: { courses: Course[] }) {
           ))}
         </section>
       </div>
+      <MobileTabBar />
     </main>
   );
 }
@@ -93,69 +92,61 @@ function CatalogCourseCard({
       : 0;
 
   return (
-    <Card className="rounded-xl border-white bg-white py-0 shadow-lg shadow-[#24133f]/8">
-      <CardContent className="flex min-h-[300px] flex-col px-6 py-6">
-        <div className="flex items-start justify-between gap-4">
+    <Card className="rounded-lg border-0 bg-white py-0 shadow-sm ring-1 ring-black/6">
+      <CardContent className="flex min-h-64 flex-col px-4 py-4">
+        <div className="flex items-start justify-between gap-3">
           <div
             className={cn(
-              "flex size-16 items-center justify-center rounded-xl text-white shadow-lg",
-              isGold
-                ? "bg-[#f6b20b] shadow-[#f6b20b]/25"
-                : "bg-[#4a22d4] shadow-[#4a22d4]/25"
+              "flex size-12 items-center justify-center rounded-lg text-white",
+              isGold ? "bg-[#ff9f0a]" : "bg-[#0a84ff]"
             )}
           >
-            <Icon className="size-8" />
+            <Icon className="size-6" />
           </div>
           <Badge
             className={cn(
-              "rounded-lg px-3",
+              "h-8 rounded-lg px-3 text-xs font-semibold hover:bg-inherit",
               isGold
-                ? "bg-[#fff3d4] text-[#5f3b00] hover:bg-[#fff3d4]"
-                : "bg-[#eee8ff] text-[#30108f] hover:bg-[#eee8ff]"
+                ? "bg-[#fff4d7] text-[#6b4a00]"
+                : "bg-[#e8f2ff] text-[#0a66d1]"
             )}
           >
             {typeof completedLessons === "number"
               ? `${completedLessons} / ${availableLessons}`
-              : `${availableLessons} modules`}
+              : `${availableLessons} lessons`}
           </Badge>
         </div>
 
-        <div className="mt-6 flex-1">
-          <h2 className="text-2xl font-semibold tracking-normal">
+        <div className="mt-5 flex-1">
+          <h2 className="text-xl font-semibold tracking-normal">
             {course.title}
           </h2>
-          <p className="mt-3 text-base leading-7 text-[#625b75]">
+          <p className="mt-2 text-sm leading-6 text-[#636366]">
             {course.description}
           </p>
         </div>
 
-        {isAuthenticated ? (
-          <div className="mt-6">
-            <div className="mb-2 flex items-center justify-between text-sm font-medium text-[#625b75]">
-              <span>Progress</span>
-              <span>{progress}%</span>
-            </div>
-            <div className="h-3 overflow-hidden rounded-full bg-[#e7e3ef]">
-              <div
-                className={cn(
-                  "h-full rounded-full",
-                  isGold ? "bg-[#f6ad00]" : "bg-[#4a22d4]"
-                )}
-                style={{ width: `${progress}%` }}
-              />
-            </div>
+        <div className="mt-5">
+          <div className="mb-2 flex items-center justify-between text-xs font-semibold text-[#6e6e73]">
+            <span>Progress</span>
+            <span>{isAuthenticated ? `${progress}%` : "Not started"}</span>
           </div>
-        ) : (
-          <div className="mt-6 rounded-lg bg-[#f7f6fb] px-4 py-3 text-sm leading-6 text-[#625b75]">
-            Create an account to save progress and unlock lesson completion.
+          <div className="h-2 overflow-hidden rounded-full bg-[#e5e5ea]">
+            <div
+              className={cn(
+                "h-full rounded-full",
+                isGold ? "bg-[#ff9f0a]" : "bg-[#34c759]"
+              )}
+              style={{ width: `${isAuthenticated ? progress : 0}%` }}
+            />
           </div>
-        )}
+        </div>
 
-        <div className="mt-6 grid gap-3 sm:grid-cols-2">
+        <div className="mt-5 grid grid-cols-[1fr_1fr] gap-2">
           <Button
             asChild
             variant="outline"
-            className="h-11 rounded-lg border-[#e3deef] bg-white"
+            className="h-11 rounded-lg border-[#d1d1d6] bg-white text-[#1c1c1e]"
           >
             <Link href={`/courses/${course.id}`}>
               Details
@@ -164,7 +155,7 @@ function CatalogCourseCard({
           </Button>
           <Button
             asChild
-            className="h-11 rounded-lg bg-[#4720d5] text-white hover:bg-[#3513b3]"
+            className="h-11 rounded-lg bg-[#0a84ff] text-white hover:bg-[#006edb]"
           >
             <Link
               href={
@@ -173,7 +164,7 @@ function CatalogCourseCard({
                   : "/login"
               }
             >
-              {isAuthenticated ? "Continue" : "Register"}
+              {isAuthenticated ? "Start" : "Sign in"}
               <ArrowRight className="size-4" />
             </Link>
           </Button>

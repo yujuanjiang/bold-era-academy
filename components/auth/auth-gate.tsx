@@ -13,8 +13,8 @@ export function AuthGate({ children }: { children: ReactNode }) {
 
   if (isLoading) {
     return (
-      <main className="grid min-h-screen place-items-center bg-[#f7f6fb] px-5 py-10 text-[#100d24]">
-        <div className="text-sm font-semibold text-[#625b75]">
+      <main className="grid min-h-dvh place-items-center bg-[#f5f5f7] px-5 py-10 text-[#1c1c1e]">
+        <div className="text-sm font-semibold text-[#6e6e73]">
           Loading your account...
         </div>
       </main>
@@ -26,14 +26,14 @@ export function AuthGate({ children }: { children: ReactNode }) {
   }
 
   return (
-    <main className="grid min-h-screen place-items-center bg-[#f7f6fb] px-5 py-10 text-[#100d24]">
-      <Card className="w-full max-w-md rounded-xl border-white bg-white py-0 shadow-xl shadow-[#24133f]/10">
+    <main className="grid min-h-dvh place-items-center bg-[#f5f5f7] px-4 py-10 text-[#1c1c1e]">
+      <Card className="w-full max-w-md rounded-lg border-0 bg-white py-0 shadow-sm ring-1 ring-black/6">
         <CardContent className="px-6 py-8 text-center">
-          <div className="mx-auto flex size-14 items-center justify-center rounded-xl bg-[#30108f] text-[#ffc533] shadow-lg shadow-[#30108f]/20">
+          <div className="mx-auto flex size-14 items-center justify-center rounded-lg bg-[#1c1c1e] text-[#ffd60a]">
             <Sparkles className="size-7" />
           </div>
           <div className="mt-6 flex justify-center">
-            <span className="inline-flex items-center gap-2 rounded-lg bg-[#eee8ff] px-3 py-1 text-sm font-semibold text-[#30108f]">
+            <span className="inline-flex items-center gap-2 rounded-lg bg-[#e8f2ff] px-3 py-1 text-sm font-semibold text-[#0a66d1]">
               <LockKeyhole className="size-4" />
               Members only
             </span>
@@ -41,13 +41,13 @@ export function AuthGate({ children }: { children: ReactNode }) {
           <h1 className="mt-4 text-3xl font-semibold tracking-normal">
             Sign in to keep learning
           </h1>
-          <p className="mt-3 text-base leading-7 text-[#625b75]">
+          <p className="mt-3 text-base leading-7 text-[#636366]">
             Create an account or sign in to access your courses, lessons, and
             saved progress.
           </p>
           <Button
             asChild
-            className="mt-7 h-12 w-full rounded-lg bg-[#4720d5] text-white hover:bg-[#3513b3]"
+            className="mt-7 h-12 w-full rounded-lg bg-[#0a84ff] text-white hover:bg-[#006edb]"
           >
             <Link href="/login">Sign in or register</Link>
           </Button>

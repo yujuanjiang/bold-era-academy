@@ -123,8 +123,15 @@
   }
   body {
     @apply bg-background text-foreground;
+    min-height: 100dvh;
+    overscroll-behavior-y: none;
   }
   html {
     @apply font-sans;
+    background: #f5f5f7;
+  }
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
   }
 }

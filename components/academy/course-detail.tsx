@@ -13,13 +13,14 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+import { MobileTabBar } from "@/components/academy/mobile-tab-bar";
+import { useAcademyProgress } from "@/components/academy/use-academy-progress";
+import { useLocalAuth } from "@/components/auth/use-local-auth";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useLocalAuth } from "@/components/auth/use-local-auth";
 import type { Course, Lesson } from "@/lib/academy-data";
 import { cn } from "@/lib/utils";
-import { useAcademyProgress } from "./use-academy-progress";
 
 const courseIcons = {
   brain: Brain,
@@ -40,121 +41,130 @@ export function CourseDetail({ course }: { course: Course }) {
   const isGold = course.tone === "gold";
 
   return (
-    <main className="min-h-screen bg-[#f7f6fb] px-5 py-6 text-[#100d24] sm:px-8 lg:px-10">
-      <div className="mx-auto max-w-5xl">
-        <Button
-          asChild
-          variant="ghost"
-          className="mb-5 text-[#4b4264] hover:bg-[#ede8ff] hover:text-[#30108f]"
-        >
-          <Link href="/">
-            <ArrowLeft className="size-4" />
-            Dashboard
-          </Link>
-        </Button>
-
-        <Card className="rounded-xl border-white bg-white py-0 shadow-xl shadow-[#24133f]/8">
-          <CardContent className="grid gap-7 px-6 py-7 md:grid-cols-[auto_1fr_auto] md:items-center md:px-8">
-            <div
-              className={cn(
-                "flex size-20 items-center justify-center rounded-xl text-white shadow-lg",
-                isGold
-                  ? "bg-[#f6b20b] shadow-[#f6b20b]/25"
-                  : "bg-[#4a22d4] shadow-[#4a22d4]/25"
-              )}
+    <main className="min-h-dvh bg-[#f5f5f7] pb-[calc(5.25rem+env(safe-area-inset-bottom))] pt-[env(safe-area-inset-top)] text-[#1c1c1e] md:pb-0">
+      <div className="mx-auto max-w-3xl px-4 sm:px-6">
+        <header className="sticky top-0 z-30 -mx-4 border-b border-black/6 bg-[#f5f5f7]/86 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6">
+          <div className="grid min-h-11 grid-cols-[2.75rem_1fr_2.75rem] items-center">
+            <Button
+              asChild
+              variant="ghost"
+              size="icon-lg"
+              className="rounded-lg text-[#0a66d1] hover:bg-white"
             >
-              <Icon className="size-10" />
-            </div>
+              <Link href="/courses" aria-label="Back to Courses">
+                <ArrowLeft className="size-5" />
+              </Link>
+            </Button>
+            <p className="truncate text-center text-[1.05rem] font-semibold">
+              {course.title}
+            </p>
+          </div>
+        </header>
 
-            <div>
-              <Badge
-                className={cn(
-                  "mb-3 rounded-lg px-3",
-                  isGold
-                    ? "bg-[#fff3d4] text-[#5f3b00] hover:bg-[#fff3d4]"
-                    : "bg-[#eee8ff] text-[#30108f] hover:bg-[#eee8ff]"
-                )}
-              >
-                {isAuthenticated
-                  ? `${completed} of ${availableLessons} complete`
-                  : `${availableLessons} available modules`}
-              </Badge>
-              <h1 className="text-3xl font-semibold tracking-normal">
-                {course.title}
-              </h1>
-              <p className="mt-2 max-w-2xl text-base leading-7 text-[#625b75]">
-                {course.description}
-              </p>
-              {isAuthenticated && (
-                <div className="mt-5 h-3 overflow-hidden rounded-full bg-[#e7e3ef]">
+        <section className="grid gap-5 py-5">
+          <Card className="rounded-lg border-0 bg-white py-0 shadow-sm ring-1 ring-black/6">
+            <CardContent className="px-4 py-4 sm:px-5 sm:py-5">
+              <div className="flex items-start gap-4">
+                <div
+                  className={cn(
+                    "flex size-14 shrink-0 items-center justify-center rounded-lg text-white",
+                    isGold ? "bg-[#ff9f0a]" : "bg-[#0a84ff]"
+                  )}
+                >
+                  <Icon className="size-7" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <Badge
+                    className={cn(
+                      "mb-2 h-8 rounded-lg px-3 text-xs font-semibold hover:bg-inherit",
+                      isGold
+                        ? "bg-[#fff4d7] text-[#6b4a00]"
+                        : "bg-[#e8f2ff] text-[#0a66d1]"
+                    )}
+                  >
+                    {isAuthenticated
+                      ? `${completed} of ${availableLessons} complete`
+                      : `${availableLessons} lessons`}
+                  </Badge>
+                  <h1 className="text-2xl font-semibold tracking-normal">
+                    {course.title}
+                  </h1>
+                  <p className="mt-2 text-sm leading-6 text-[#636366]">
+                    {course.description}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-5">
+                <div className="mb-2 flex items-center justify-between text-xs font-semibold text-[#6e6e73]">
+                  <span>Progress</span>
+                  <span>{isAuthenticated ? `${progress}%` : "Sign in to save"}</span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-[#e5e5ea]">
                   <div
                     className={cn(
                       "h-full rounded-full",
-                      isGold ? "bg-[#f6ad00]" : "bg-[#4a22d4]"
+                      isGold ? "bg-[#ff9f0a]" : "bg-[#34c759]"
                     )}
-                    style={{ width: `${progress}%` }}
+                    style={{ width: `${isAuthenticated ? progress : 0}%` }}
                   />
                 </div>
-              )}
-            </div>
+              </div>
 
-            <Button
-              asChild
-              className="h-12 rounded-lg bg-[#4720d5] px-5 text-white shadow-lg shadow-[#4720d5]/20 hover:bg-[#3513b3]"
-            >
-              <Link
-                href={
-                  isAuthenticated
-                    ? `/courses/${course.id}/lessons/${
-                        firstAvailableLesson(course).id
-                      }`
-                    : "/login"
-                }
+              <Button
+                asChild
+                className="mt-5 h-12 w-full rounded-lg bg-[#0a84ff] text-base font-semibold text-white hover:bg-[#006edb]"
               >
-                {isAuthenticated ? "Continue" : "Register"}
-                <ArrowRight className="size-4" />
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-
-        <section className="mt-8">
-          <div className="mb-4 flex items-end justify-between gap-4">
-            <div>
-              <h2 className="text-2xl font-semibold tracking-normal">Lessons</h2>
-              <p className="mt-1 text-sm text-[#676174]">
-                Short cards you can finish during a coffee break.
-              </p>
-            </div>
-          </div>
-
-          <div className="grid gap-4">
-            {course.lessons.map((lesson, index) => {
-              const previousLessons = course.lessons.slice(0, index);
-              const isUnlocked =
-                isAuthenticated &&
-                (lesson.status !== "locked" ||
-                  previousLessons.every((item) =>
-                    isLessonComplete(course.id, item)
-                  ));
-
-              return (
-                <LessonRow
-                  key={lesson.id}
-                  course={course}
-                  lesson={lesson}
-                  lessonNumber={index + 1}
-                  isComplete={
-                    isAuthenticated && isLessonComplete(course.id, lesson)
+                <Link
+                  href={
+                    isAuthenticated
+                      ? `/courses/${course.id}/lessons/${
+                          firstAvailableLesson(course).id
+                        }`
+                      : "/login"
                   }
-                  isUnlocked={isUnlocked}
-                  isAuthenticated={isAuthenticated}
-                />
-              );
-            })}
-          </div>
+                >
+                  {isAuthenticated ? "Continue" : "Sign in to start"}
+                  <ArrowRight className="size-5" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+
+          <section>
+            <h2 className="mb-3 px-1 text-sm font-semibold uppercase tracking-normal text-[#6e6e73]">
+              Lessons
+            </h2>
+            <div className="overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-black/6">
+              {course.lessons.map((lesson, index) => {
+                const previousLessons = course.lessons.slice(0, index);
+                const isUnlocked =
+                  isAuthenticated &&
+                  (lesson.status !== "locked" ||
+                    previousLessons.every((item) =>
+                      isLessonComplete(course.id, item)
+                    ));
+
+                return (
+                  <LessonRow
+                    key={lesson.id}
+                    course={course}
+                    lesson={lesson}
+                    lessonNumber={index + 1}
+                    isComplete={
+                      isAuthenticated && isLessonComplete(course.id, lesson)
+                    }
+                    isUnlocked={isUnlocked}
+                    isAuthenticated={isAuthenticated}
+                    isLast={index === course.lessons.length - 1}
+                  />
+                );
+              })}
+            </div>
+          </section>
         </section>
       </div>
+      <MobileTabBar />
     </main>
   );
 }
@@ -166,6 +176,7 @@ function LessonRow({
   isComplete,
   isUnlocked,
   isAuthenticated,
+  isLast,
 }: {
   course: Course;
   lesson: Lesson;
@@ -173,70 +184,64 @@ function LessonRow({
   isComplete: boolean;
   isUnlocked: boolean;
   isAuthenticated: boolean;
+  isLast: boolean;
 }) {
-  return (
-    <Card className="rounded-xl border-white bg-white py-0 shadow-md shadow-[#24133f]/6">
-      <CardContent className="grid gap-4 px-5 py-5 sm:grid-cols-[auto_1fr_auto] sm:items-center">
-        <div
-          className={cn(
-            "flex size-11 items-center justify-center rounded-lg font-semibold",
-            isComplete
-              ? "bg-[#e8f8ef] text-[#118347]"
-              : !isAuthenticated || !isUnlocked
-                ? "bg-[#f0edf5] text-[#8b849a]"
-                : "bg-[#eee8ff] text-[#30108f]"
-          )}
-        >
-          {isComplete ? (
-            <CheckCircle2 className="size-5" />
-          ) : !isAuthenticated || !isUnlocked ? (
-            <Lock className="size-5" />
-          ) : (
-            lessonNumber
-          )}
-        </div>
+  const content = (
+    <div
+      className={cn(
+        "grid min-h-20 grid-cols-[2.75rem_1fr_auto] items-center gap-3 px-4 py-3 transition",
+        !isLast && "border-b border-black/6",
+        (isUnlocked || !isAuthenticated) && "active:bg-[#f2f2f7]"
+      )}
+    >
+      <div
+        className={cn(
+          "flex size-10 items-center justify-center rounded-lg text-sm font-semibold",
+          isComplete
+            ? "bg-[#e7f8ed] text-[#15803d]"
+            : !isAuthenticated || !isUnlocked
+              ? "bg-[#f2f2f7] text-[#8e8e93]"
+              : "bg-[#e8f2ff] text-[#0a66d1]"
+        )}
+      >
+        {isComplete ? (
+          <CheckCircle2 className="size-5" />
+        ) : !isAuthenticated || !isUnlocked ? (
+          <Lock className="size-5" />
+        ) : (
+          lessonNumber
+        )}
+      </div>
 
-        <div>
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-lg font-semibold tracking-normal">
-              {lesson.title}
-            </h3>
-            <Badge className="rounded-lg bg-[#f4f1ff] text-[#4b4264] hover:bg-[#f4f1ff]">
-              {lesson.kind}
-            </Badge>
-            <Badge className="rounded-lg bg-[#fff3d4] text-[#5f3b00] hover:bg-[#fff3d4]">
-              +{lesson.xp} XP
-            </Badge>
-          </div>
-          <p className="mt-1 max-w-2xl text-sm leading-6 text-[#625b75]">
-            {lesson.summary}
-          </p>
+      <div className="min-w-0">
+        <div className="flex items-center gap-2">
+          <h3 className="truncate text-base font-semibold tracking-normal">
+            {lesson.title}
+          </h3>
+          <span className="shrink-0 text-xs font-semibold text-[#8e8e93]">
+            +{lesson.xp}
+          </span>
         </div>
+        <p className="mt-1 line-clamp-2 text-sm leading-5 text-[#636366]">
+          {lesson.summary}
+        </p>
+      </div>
 
-        <Button
-          asChild={isAuthenticated ? isUnlocked : true}
-          disabled={isAuthenticated && !isUnlocked}
-          variant={isComplete ? "outline" : "default"}
-          className={cn(
-            "h-10 rounded-lg",
-            !isComplete && isUnlocked && "bg-[#4720d5] text-white hover:bg-[#3513b3]"
-          )}
-        >
-          {!isAuthenticated ? (
-            <Link href="/login">
-              Register
-              <PlayCircle className="size-4" />
-            </Link>
-          ) : isUnlocked ? (
-            <Link href={`/courses/${course.id}/lessons/${lesson.id}`}>
-              {isComplete ? "Review" : "Start"}
-              <PlayCircle className="size-4" />
-            </Link>
-          ) : (
-            "Locked"
-          )}
-        </Button>
-      </CardContent>
-    </Card>
+      {isUnlocked || !isAuthenticated ? (
+        <PlayCircle className="size-5 text-[#0a66d1]" />
+      ) : (
+        <Lock className="size-4 text-[#8e8e93]" />
+      )}
+    </div>
   );
+
+  if (!isAuthenticated) {
+    return <Link href="/login">{content}</Link>;
+  }
+
+  if (!isUnlocked) {
+    return content;
+  }
+
+  return <Link href={`/courses/${course.id}/lessons/${lesson.id}`}>{content}</Link>;
 }
