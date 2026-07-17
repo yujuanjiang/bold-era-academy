@@ -10,7 +10,6 @@ import {
   LogOut,
   MessageSquare,
   PlayCircle,
-  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -48,9 +47,11 @@ export function LearningDashboard({ courses }: { courses: Course[] }) {
         <header className="sticky top-0 z-30 -mx-4 border-b border-black/6 bg-[#f5f5f7]/86 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
           <div className="flex items-center justify-between gap-3">
             <Link href="/" className="flex min-h-11 items-center gap-3">
-              <span className="flex size-10 items-center justify-center rounded-lg bg-[#1c1c1e] text-[#ffd60a]">
-                <Sparkles className="size-5" />
-              </span>
+              <span
+                aria-hidden="true"
+                className="block size-10 rounded-lg bg-cover bg-center"
+                style={{ backgroundImage: "url('/icon.png')" }}
+              />
               <span>
                 <span className="block text-[1.05rem] font-semibold leading-tight">
                   Bold Era

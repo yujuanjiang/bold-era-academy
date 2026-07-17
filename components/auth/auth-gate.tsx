@@ -1,6 +1,6 @@
 "use client";
 
-import { LockKeyhole, Sparkles } from "lucide-react";
+import { LockKeyhole } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -29,9 +29,11 @@ export function AuthGate({ children }: { children: ReactNode }) {
     <main className="grid min-h-dvh place-items-center bg-[#f5f5f7] px-4 py-10 text-[#1c1c1e]">
       <Card className="w-full max-w-md rounded-lg border-0 bg-white py-0 shadow-sm ring-1 ring-black/6">
         <CardContent className="px-6 py-8 text-center">
-          <div className="mx-auto flex size-14 items-center justify-center rounded-lg bg-[#1c1c1e] text-[#ffd60a]">
-            <Sparkles className="size-7" />
-          </div>
+          <div
+            aria-hidden="true"
+            className="mx-auto size-14 rounded-lg bg-cover bg-center"
+            style={{ backgroundImage: "url('/icon.png')" }}
+          />
           <div className="mt-6 flex justify-center">
             <span className="inline-flex items-center gap-2 rounded-lg bg-[#e8f2ff] px-3 py-1 text-sm font-semibold text-[#0a66d1]">
               <LockKeyhole className="size-4" />

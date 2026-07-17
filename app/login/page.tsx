@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
@@ -62,9 +62,11 @@ export default function LoginPage() {
 
         <section className="grid flex-1 content-center gap-5 py-6">
           <div className="text-center">
-            <div className="mx-auto flex size-14 items-center justify-center rounded-lg bg-[#1c1c1e] text-[#ffd60a]">
-              <Sparkles className="size-7" />
-            </div>
+            <div
+              aria-hidden="true"
+              className="mx-auto size-14 rounded-lg bg-cover bg-center"
+              style={{ backgroundImage: "url('/icon.png')" }}
+            />
             <h1 className="mt-4 text-3xl font-semibold tracking-normal">
               Bold Era Academy
             </h1>
