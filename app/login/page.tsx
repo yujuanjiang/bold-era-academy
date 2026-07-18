@@ -42,7 +42,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-dvh bg-[#f5f5f7] pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] text-[#1c1c1e]">
+    <main className="min-h-dvh bg-[#f5f5f7] pb-[var(--app-safe-bottom)] pt-[var(--app-safe-top)] text-[#1c1c1e]">
       <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4">
         <header className="sticky top-0 z-30 -mx-4 border-b border-black/6 bg-[#f5f5f7]/86 px-4 py-3 backdrop-blur-xl">
           <div className="grid min-h-11 grid-cols-[2.75rem_1fr_2.75rem] items-center">

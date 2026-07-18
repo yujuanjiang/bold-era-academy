@@ -42,7 +42,7 @@ export function LearningDashboard({ courses }: { courses: Course[] }) {
   const progress = Math.round((completed / availableLessons) * 100);
 
   return (
-    <main className="min-h-dvh bg-[#f5f5f7] pb-[calc(5.25rem+env(safe-area-inset-bottom))] pt-[env(safe-area-inset-top)] text-[#1c1c1e] md:pb-0">
+    <main className="min-h-dvh bg-[#f5f5f7] pb-[calc(5.25rem+var(--app-safe-bottom))] pt-[var(--app-safe-top)] text-[#1c1c1e] md:pb-0">
       <div className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col px-4 sm:px-6 lg:px-8">
         <header className="sticky top-0 z-30 -mx-4 border-b border-black/6 bg-[#f5f5f7]/86 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
           <div className="flex items-center justify-between gap-3">

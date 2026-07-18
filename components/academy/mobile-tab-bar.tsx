@@ -16,7 +16,7 @@ export function MobileTabBar() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-black/8 bg-white/92 px-4 pb-[calc(env(safe-area-inset-bottom)+0.45rem)] pt-2 shadow-[0_-12px_30px_rgba(24,24,27,0.08)] backdrop-blur-xl md:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-black/8 bg-white/92 px-4 pb-[calc(var(--app-safe-bottom)+0.45rem)] pt-2 shadow-[0_-12px_30px_rgba(24,24,27,0.08)] backdrop-blur-xl md:hidden">
       <div className="mx-auto grid max-w-md grid-cols-3 gap-1">
         {tabs.map((tab) => {
           const Icon = tab.icon;

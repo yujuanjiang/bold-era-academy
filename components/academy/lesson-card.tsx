@@ -27,7 +27,7 @@ export function LessonCard({
   const cardProgress = Math.round(((activeCardIndex + 1) / cards.length) * 100);
 
   return (
-    <main className="min-h-dvh bg-[#101012] pb-[calc(6.5rem+env(safe-area-inset-bottom))] pt-[env(safe-area-inset-top)] text-white">
+    <main className="min-h-dvh bg-[#101012] pb-[calc(6.5rem+var(--app-safe-bottom))] pt-[var(--app-safe-top)] text-white">
       <div className="mx-auto flex min-h-dvh max-w-3xl flex-col px-4 sm:px-6">
         <header className="sticky top-0 z-30 -mx-4 border-b border-white/10 bg-[#101012]/88 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6">
           <div className="grid min-h-11 grid-cols-[2.75rem_1fr_2.75rem] items-center">
@@ -111,7 +111,7 @@ export function LessonCard({
         </section>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#101012]/88 px-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-3 backdrop-blur-xl">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#101012]/88 px-4 pb-[calc(var(--app-safe-bottom)+0.75rem)] pt-3 backdrop-blur-xl">
         <div className="mx-auto grid max-w-3xl grid-cols-[1fr_auto] gap-3">
           <Button
             asChild={isComplete}
