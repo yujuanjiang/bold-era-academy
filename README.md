@@ -56,6 +56,10 @@ Password reset emails redirect to `/reset-password`. In Supabase, open `Authenti
 - `http://localhost:3000/reset-password`
 - `https://www.boldera.academy/reset-password`
 
+The App Store Support URL is:
+
+- `https://www.boldera.academy/support`
+
 ## Current Data Model
 
 - `auth.users`: managed by Supabase Auth.
