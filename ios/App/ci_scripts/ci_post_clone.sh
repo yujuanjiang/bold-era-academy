@@ -6,6 +6,16 @@ echo "Preparing Capacitor web assets for Xcode Cloud..."
 
 cd "$CI_PRIMARY_REPOSITORY_PATH"
 
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+
+if ! command -v npm >/dev/null 2>&1; then
+  echo "npm was not found. Installing Node.js with Homebrew..."
+  brew install node
+fi
+
+node --version
+npm --version
+
 npm ci
 npm run ios:build
 
