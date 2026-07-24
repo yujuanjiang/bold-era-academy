@@ -16,6 +16,20 @@ type AuthResult = {
   error?: string;
 };
 
+function authRedirectUrl(path: string) {
+  const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+
+  if (configuredSiteUrl) {
+    return new URL(path, configuredSiteUrl).toString();
+  }
+
+  if (typeof window !== "undefined") {
+    return new URL(path, window.location.origin).toString();
+  }
+
+  return path;
+}
+
 function displayNameFromUser(user: User | null) {
   if (!user) {
     return "";
@@ -205,6 +219,56 @@ export function useLocalAuth() {
     return { ok: true };
   }
 
+  async function resetPassword(email: string): Promise<AuthResult> {
+    if (!supabase || !isSupabaseConfigured) {
+      return {
+        ok: false,
+        error: "Supabase is not configured yet.",
+      };
+    }
+
+    const cleanedEmail = email.trim().toLowerCase();
+
+    if (!cleanedEmail.includes("@")) {
+      return { ok: false, error: "Please enter a valid email address." };
+    }
+
+    const { error } = await supabase.auth.resetPasswordForEmail(cleanedEmail, {
+      redirectTo: authRedirectUrl("/reset-password"),
+    });
+
+    if (error) {
+      return { ok: false, error: error.message };
+    }
+
+    return { ok: true };
+  }
+
+  async function updatePassword(password: string): Promise<AuthResult> {
+    if (!supabase || !isSupabaseConfigured) {
+      return {
+        ok: false,
+        error: "Supabase is not configured yet.",
+      };
+    }
+
+    const cleanedPassword = password.trim();
+
+    if (cleanedPassword.length < 6) {
+      return { ok: false, error: "Password must be at least 6 characters." };
+    }
+
+    const { error } = await supabase.auth.updateUser({
+      password: cleanedPassword,
+    });
+
+    if (error) {
+      return { ok: false, error: error.message };
+    }
+
+    return { ok: true };
+  }
+
   async function signOut() {
     await supabase?.auth.signOut();
   }
@@ -214,7 +278,9 @@ export function useLocalAuth() {
     isAuthenticated: Boolean(currentUser),
     isLoading,
     register,
+    resetPassword,
     signIn,
     signOut,
+    updatePassword,
   };
 }

@@ -44,11 +44,17 @@ cp .env.local.example .env.local
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
 8. Restart the dev server.
 
 For fast testing, Supabase email confirmation can be disabled in `Authentication` > `Providers` > `Email`. If email confirmation is enabled, users must confirm their email before they can sign in.
+
+Password reset emails redirect to `/reset-password`. In Supabase, open `Authentication` > `URL Configuration` and add these redirect URLs:
+
+- `http://localhost:3000/reset-password`
+- `https://www.boldera.academy/reset-password`
 
 ## Current Data Model
 
@@ -64,5 +70,6 @@ Add the same variables in Vercel:
 
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `NEXT_PUBLIC_SITE_URL=https://www.boldera.academy`
 
 Then redeploy.

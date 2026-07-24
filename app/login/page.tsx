@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
@@ -10,22 +10,40 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useLocalAuth } from "@/components/auth/use-local-auth";
 import { cn } from "@/lib/utils";
 
-type AuthMode = "signin" | "register";
+type AuthMode = "signin" | "register" | "forgot";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { currentUser, register, signIn } = useLocalAuth();
+  const { currentUser, register, resetPassword, signIn } = useLocalAuth();
   const [mode, setMode] = useState<AuthMode>("signin");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+    setMessage("");
     setIsSubmitting(true);
+
+    if (mode === "forgot") {
+      const result = await resetPassword(email);
+
+      if (!result.ok) {
+        setError(result.error ?? "Something went wrong.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      setMessage(
+        "If an account exists for this email, a password reset link has been sent."
+      );
+      setIsSubmitting(false);
+      return;
+    }
 
     const result =
       mode === "register"
@@ -103,10 +121,11 @@ export default function LoginPage() {
                       onClick={() => {
                         setMode("signin");
                         setError("");
+                        setMessage("");
                       }}
                       className={cn(
                         "h-10 rounded-md text-sm font-semibold transition",
-                        mode === "signin"
+                        mode !== "register"
                           ? "bg-white text-[#1c1c1e] shadow-sm"
                           : "text-[#636366]"
                       )}
@@ -118,6 +137,7 @@ export default function LoginPage() {
                       onClick={() => {
                         setMode("register");
                         setError("");
+                        setMessage("");
                       }}
                       className={cn(
                         "h-10 rounded-md text-sm font-semibold transition",
@@ -131,6 +151,15 @@ export default function LoginPage() {
                   </div>
 
                   <form className="mt-5 space-y-4" onSubmit={handleSubmit}>
+                    {mode === "forgot" && (
+                      <div className="rounded-lg bg-[#f2f2f7] px-4 py-3">
+                        <p className="text-sm leading-6 text-[#3a3a3c]">
+                          Enter your account email and we&apos;ll send a secure
+                          link to reset your password.
+                        </p>
+                      </div>
+                    )}
+
                     {mode === "register" && (
                       <label className="block">
                         <span className="text-sm font-semibold text-[#3a3a3c]">
@@ -158,22 +187,30 @@ export default function LoginPage() {
                       />
                     </label>
 
-                    <label className="block">
-                      <span className="text-sm font-semibold text-[#3a3a3c]">
-                        Password
-                      </span>
-                      <input
-                        type="password"
-                        value={password}
-                        onChange={(event) => setPassword(event.target.value)}
-                        className="mt-2 h-12 w-full rounded-lg border border-[#d1d1d6] bg-white px-4 text-base outline-none transition focus:border-[#0a84ff] focus:ring-4 focus:ring-[#0a84ff]/14"
-                        placeholder="At least 6 characters"
-                      />
-                    </label>
+                    {mode !== "forgot" && (
+                      <label className="block">
+                        <span className="text-sm font-semibold text-[#3a3a3c]">
+                          Password
+                        </span>
+                        <input
+                          type="password"
+                          value={password}
+                          onChange={(event) => setPassword(event.target.value)}
+                          className="mt-2 h-12 w-full rounded-lg border border-[#d1d1d6] bg-white px-4 text-base outline-none transition focus:border-[#0a84ff] focus:ring-4 focus:ring-[#0a84ff]/14"
+                          placeholder="At least 6 characters"
+                        />
+                      </label>
+                    )}
 
                     {error && (
                       <p className="rounded-lg bg-[#fff1f1] px-4 py-3 text-sm font-semibold text-[#b42318]">
                         {error}
+                      </p>
+                    )}
+
+                    {message && (
+                      <p className="rounded-lg bg-[#edf8f2] px-4 py-3 text-sm font-semibold text-[#137333]">
+                        {message}
                       </p>
                     )}
 
@@ -185,9 +222,43 @@ export default function LoginPage() {
                         ? "Please wait..."
                         : mode === "register"
                           ? "Create account"
+                          : mode === "forgot"
+                            ? "Send reset link"
                           : "Sign in"}
-                      <ArrowRight className="size-5" />
+                      {mode === "forgot" ? (
+                        <Mail className="size-5" />
+                      ) : (
+                        <ArrowRight className="size-5" />
+                      )}
                     </Button>
+
+                    {mode === "signin" && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMode("forgot");
+                          setError("");
+                          setMessage("");
+                        }}
+                        className="w-full text-center text-sm font-semibold text-[#0a66d1]"
+                      >
+                        Forgot password?
+                      </button>
+                    )}
+
+                    {mode === "forgot" && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMode("signin");
+                          setError("");
+                          setMessage("");
+                        }}
+                        className="w-full text-center text-sm font-semibold text-[#0a66d1]"
+                      >
+                        Back to sign in
+                      </button>
+                    )}
                   </form>
                 </>
               )}
