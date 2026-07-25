@@ -60,6 +60,10 @@ The App Store Support URL is:
 
 - `https://www.boldera.academy/support`
 
+The App Store Privacy Policy URL is:
+
+- `https://www.boldera.academy/privacy`
+
 ## Current Data Model
 
 - `auth.users`: managed by Supabase Auth.
