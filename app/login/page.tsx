@@ -26,7 +26,7 @@ type AuthMode = "signin" | "register" | "forgot";
 export default function LoginPage() {
   const router = useRouter();
   const { currentUser, register, resetPassword, signIn } = useLocalAuth();
-  const { completedCount } = useAcademyProgress();
+  const { completedCount, isCourseEnrolled } = useAcademyProgress();
   const [mode, setMode] = useState<AuthMode>("signin");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -34,16 +34,22 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const totalLessons = courses.reduce(
+  const enrolledCourses = currentUser
+    ? courses.filter((course) => isCourseEnrolled(course.id))
+    : [];
+  const totalLessons = enrolledCourses.reduce(
     (lessonCount, course) => lessonCount + course.lessons.length,
     0
   );
   const completedLessons = currentUser
-    ? courses.reduce((count, course) => count + completedCount(course), 0)
+    ? enrolledCourses.reduce((count, course) => count + completedCount(course), 0)
     : 0;
-  const overallProgress = Math.round((completedLessons / totalLessons) * 100);
+  const overallProgress =
+    totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
   const completedCourses = currentUser
-    ? courses.filter((course) => completedCount(course) === course.lessons.length)
+    ? enrolledCourses.filter(
+        (course) => completedCount(course) === course.lessons.length
+      )
         .length
     : 0;
 
@@ -161,7 +167,9 @@ export default function LoginPage() {
                     <div className="mt-4">
                       <div className="mb-2 flex items-center justify-between text-xs font-semibold text-[#6e6e73]">
                         <span>{overallProgress}% complete</span>
-                        <span>{completedCourses} courses finished</span>
+                        <span>
+                          {enrolledCourses.length} courses enrolled
+                        </span>
                       </div>
                       <div className="h-2 overflow-hidden rounded-full bg-[#d1d1d6]">
                         <div
@@ -181,7 +189,7 @@ export default function LoginPage() {
                     <ProfileStat
                       icon={<BookOpen className="size-5" />}
                       label="Courses"
-                      value={`${completedCourses}/${courses.length}`}
+                      value={`${completedCourses}/${enrolledCourses.length}`}
                     />
                   </div>
 
@@ -191,7 +199,13 @@ export default function LoginPage() {
                       Course progress
                     </div>
                     <div className="grid gap-3">
-                      {courses.map((course) => {
+                      {enrolledCourses.length === 0 && (
+                        <div className="rounded-lg border border-[#e5e5ea] bg-[#f8f8fb] px-3 py-4 text-sm leading-6 text-[#636366]">
+                          Enrol in a course to start tracking your learning
+                          progress here.
+                        </div>
+                      )}
+                      {enrolledCourses.map((course) => {
                         const completed = completedCount(course);
                         const progress = Math.round(
                           (completed / course.lessons.length) * 100

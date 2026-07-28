@@ -11,8 +11,10 @@ import {
   MessageSquare,
   PlayCircle,
   RotateCcw,
+  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 import { MobileTabBar } from "@/components/academy/mobile-tab-bar";
 import { useAcademyProgress } from "@/components/academy/use-academy-progress";
@@ -31,10 +33,17 @@ const courseIcons = {
 };
 
 export function CourseDetail({ course }: { course: Course }) {
-  const { completedCount, firstAvailableLesson, isLessonComplete } =
-    useAcademyProgress();
+  const {
+    completedCount,
+    enrollCourse,
+    firstAvailableLesson,
+    isCourseEnrolled,
+    isLessonComplete,
+  } = useAcademyProgress();
   const { currentUser } = useLocalAuth();
+  const [showSpark, setShowSpark] = useState(false);
   const isAuthenticated = Boolean(currentUser);
+  const isEnrolled = isCourseEnrolled(course.id);
   const completed = completedCount(course);
   const availableLessons = course.lessons.length;
   const progress = Math.round((completed / availableLessons) * 100);
@@ -82,13 +91,17 @@ export function CourseDetail({ course }: { course: Course }) {
                   <Badge
                     className={cn(
                       "mb-2 h-8 rounded-lg px-3 text-xs font-semibold hover:bg-inherit",
-                      isGold
-                        ? "bg-[#fff4d7] text-[#6b4a00]"
-                        : "bg-[#e8f2ff] text-[#0a66d1]"
+                      isEnrolled
+                        ? "bg-[#e7f8ed] text-[#15803d]"
+                        : isGold
+                          ? "bg-[#fff4d7] text-[#6b4a00]"
+                          : "bg-[#e8f2ff] text-[#0a66d1]"
                     )}
                   >
-                    {isAuthenticated
+                    {isAuthenticated && isEnrolled
                       ? `${completed} of ${availableLessons} complete`
+                      : isAuthenticated
+                        ? "Not enrolled"
                       : `${availableLessons} lessons`}
                   </Badge>
                   <h1 className="text-2xl font-semibold tracking-normal">
@@ -103,7 +116,13 @@ export function CourseDetail({ course }: { course: Course }) {
               <div className="mt-5">
                 <div className="mb-2 flex items-center justify-between text-xs font-semibold text-[#6e6e73]">
                   <span>Progress</span>
-                  <span>{isAuthenticated ? `${progress}%` : "Sign in to save"}</span>
+                  <span>
+                    {isAuthenticated && isEnrolled
+                      ? `${progress}%`
+                      : isAuthenticated
+                        ? "Enroll to track"
+                        : "Sign in to save"}
+                  </span>
                 </div>
                 <div className="h-2 overflow-hidden rounded-full bg-[#e5e5ea]">
                   <div
@@ -111,31 +130,54 @@ export function CourseDetail({ course }: { course: Course }) {
                       "h-full rounded-full",
                       isGold ? "bg-[#ff9f0a]" : "bg-[#34c759]"
                     )}
-                    style={{ width: `${isAuthenticated ? progress : 0}%` }}
+                    style={{
+                      width: `${isAuthenticated && isEnrolled ? progress : 0}%`,
+                    }}
                   />
                 </div>
               </div>
 
               <Button
-                asChild
+                asChild={!isAuthenticated || isEnrolled}
+                onClick={() => {
+                  if (!isAuthenticated || isEnrolled) {
+                    return;
+                  }
+
+                  enrollCourse(course.id);
+                  setShowSpark(true);
+                  window.setTimeout(() => setShowSpark(false), 900);
+                }}
                 className="mt-5 h-12 w-full rounded-lg bg-[#0a84ff] text-base font-semibold text-white hover:bg-[#006edb]"
               >
-                <Link
-                  href={
-                    isAuthenticated
-                      ? `/courses/${course.id}/lessons/${primaryLesson.id}${
-                          isCourseComplete ? "?retake=1" : ""
-                        }`
-                      : "/login"
-                  }
-                >
-                  {isCourseComplete
-                    ? "Retake Course"
-                    : isAuthenticated
-                      ? "Continue"
-                      : "Sign in to start"}
-                  <ArrowRight className="size-5" />
-                </Link>
+                {!isAuthenticated || isEnrolled ? (
+                  <Link
+                    href={
+                      isAuthenticated
+                        ? `/courses/${course.id}/lessons/${primaryLesson.id}${
+                            isCourseComplete ? "?retake=1" : ""
+                          }`
+                        : "/login"
+                    }
+                  >
+                    {isCourseComplete
+                      ? "Retake Course"
+                      : isAuthenticated
+                        ? "Continue"
+                        : "Sign in to start"}
+                    <ArrowRight className="size-5" />
+                  </Link>
+                ) : (
+                  <span className="relative inline-flex items-center gap-2">
+                    Enrol
+                    <Sparkles className="size-5" />
+                    {showSpark && (
+                      <span className="pointer-events-none absolute -right-6 -top-7 text-[#ffd60a]">
+                        <Sparkles className="size-7 animate-[enroll-spark_0.9s_ease-out_forwards] fill-current" />
+                      </span>
+                    )}
+                  </span>
+                )}
               </Button>
             </CardContent>
           </Card>
@@ -149,6 +191,7 @@ export function CourseDetail({ course }: { course: Course }) {
                 const previousLessons = course.lessons.slice(0, index);
                 const isUnlocked =
                   isAuthenticated &&
+                  isEnrolled &&
                   (lesson.status !== "locked" ||
                     previousLessons.every((item) =>
                       isLessonComplete(course.id, item)

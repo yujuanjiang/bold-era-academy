@@ -172,3 +172,18 @@
     transform: rotate(360deg);
   }
 }
+
+@keyframes enroll-spark {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.45) rotate(-12deg);
+  }
+  35% {
+    opacity: 1;
+    transform: translateY(-0.45rem) scale(1.2) rotate(10deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-1.2rem) scale(0.7) rotate(24deg);
+  }
+}

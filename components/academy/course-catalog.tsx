@@ -7,8 +7,10 @@ import {
   Bot,
   Brain,
   MessageSquare,
+  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 import { MobileTabBar } from "@/components/academy/mobile-tab-bar";
 import { useAcademyProgress } from "@/components/academy/use-academy-progress";
@@ -27,7 +29,12 @@ const courseIcons = {
 };
 
 export function CourseCatalog({ courses }: { courses: Course[] }) {
-  const { completedCount, firstAvailableLesson } = useAcademyProgress();
+  const {
+    completedCount,
+    enrollCourse,
+    firstAvailableLesson,
+    isCourseEnrolled,
+  } = useAcademyProgress();
   const { currentUser } = useLocalAuth();
   const isAuthenticated = Boolean(currentUser);
 
@@ -63,6 +70,8 @@ export function CourseCatalog({ courses }: { courses: Course[] }) {
               completedLessons={isAuthenticated ? completedCount(course) : undefined}
               nextLessonId={firstAvailableLesson(course).id}
               isAuthenticated={isAuthenticated}
+              isEnrolled={isCourseEnrolled(course.id)}
+              onEnroll={() => enrollCourse(course.id)}
             />
           ))}
         </section>
@@ -77,12 +86,17 @@ function CatalogCourseCard({
   completedLessons,
   nextLessonId,
   isAuthenticated,
+  isEnrolled,
+  onEnroll,
 }: {
   course: Course;
   completedLessons?: number;
   nextLessonId: string;
   isAuthenticated: boolean;
+  isEnrolled: boolean;
+  onEnroll: () => void;
 }) {
+  const [showSpark, setShowSpark] = useState(false);
   const Icon = courseIcons[course.icon];
   const isGold = course.tone === "gold";
   const availableLessons = course.lessons.length;
@@ -106,14 +120,18 @@ function CatalogCourseCard({
           <Badge
             className={cn(
               "h-8 rounded-lg px-3 text-xs font-semibold hover:bg-inherit",
-              isGold
-                ? "bg-[#fff4d7] text-[#6b4a00]"
-                : "bg-[#e8f2ff] text-[#0a66d1]"
+              isEnrolled
+                ? "bg-[#e7f8ed] text-[#15803d]"
+                : isGold
+                  ? "bg-[#fff4d7] text-[#6b4a00]"
+                  : "bg-[#e8f2ff] text-[#0a66d1]"
             )}
           >
-            {typeof completedLessons === "number"
+            {isEnrolled && typeof completedLessons === "number"
               ? `${completedLessons} / ${availableLessons}`
-              : `${availableLessons} lessons`}
+              : isEnrolled
+                ? "Enrolled"
+                : `${availableLessons} lessons`}
           </Badge>
         </div>
 
@@ -129,7 +147,13 @@ function CatalogCourseCard({
         <div className="mt-5">
           <div className="mb-2 flex items-center justify-between text-xs font-semibold text-[#6e6e73]">
             <span>Progress</span>
-            <span>{isAuthenticated ? `${progress}%` : "Not started"}</span>
+            <span>
+              {isAuthenticated && isEnrolled
+                ? `${progress}%`
+                : isAuthenticated
+                  ? "Enroll to track"
+                  : "Sign in to track"}
+            </span>
           </div>
           <div className="h-2 overflow-hidden rounded-full bg-[#e5e5ea]">
             <div
@@ -137,7 +161,7 @@ function CatalogCourseCard({
                 "h-full rounded-full",
                 isGold ? "bg-[#ff9f0a]" : "bg-[#34c759]"
               )}
-              style={{ width: `${isAuthenticated ? progress : 0}%` }}
+              style={{ width: `${isAuthenticated && isEnrolled ? progress : 0}%` }}
             />
           </div>
         </div>
@@ -154,19 +178,40 @@ function CatalogCourseCard({
             </Link>
           </Button>
           <Button
-            asChild
+            asChild={!isAuthenticated || isEnrolled}
+            onClick={() => {
+              if (!isAuthenticated || isEnrolled) {
+                return;
+              }
+
+              onEnroll();
+              setShowSpark(true);
+              window.setTimeout(() => setShowSpark(false), 900);
+            }}
             className="h-11 rounded-lg bg-[#0a84ff] text-white hover:bg-[#006edb]"
           >
-            <Link
-              href={
-                isAuthenticated
-                  ? `/courses/${course.id}/lessons/${nextLessonId}`
-                  : "/login"
-              }
-            >
-              {isAuthenticated ? "Start" : "Sign in"}
-              <ArrowRight className="size-4" />
-            </Link>
+            {isEnrolled || !isAuthenticated ? (
+              <Link
+                href={
+                  isAuthenticated
+                    ? `/courses/${course.id}/lessons/${nextLessonId}`
+                    : "/login"
+                }
+              >
+                {isAuthenticated ? "Start" : "Sign in"}
+                <ArrowRight className="size-4" />
+              </Link>
+            ) : (
+              <span className="relative inline-flex items-center gap-1.5">
+                Enrol
+                <Sparkles className="size-4" />
+                {showSpark && (
+                  <span className="pointer-events-none absolute -right-5 -top-6 text-[#ffd60a]">
+                    <Sparkles className="size-6 animate-[enroll-spark_0.9s_ease-out_forwards] fill-current" />
+                  </span>
+                )}
+              </span>
+            )}
           </Button>
         </div>
       </CardContent>
