@@ -1,13 +1,24 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Mail } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  BarChart3,
+  BookOpen,
+  CheckCircle2,
+  Mail,
+  Sparkles,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import type { ReactNode } from "react";
 
+import { useAcademyProgress } from "@/components/academy/use-academy-progress";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocalAuth } from "@/components/auth/use-local-auth";
+import { courses } from "@/lib/academy-data";
 import { cn } from "@/lib/utils";
 
 type AuthMode = "signin" | "register" | "forgot";
@@ -15,6 +26,7 @@ type AuthMode = "signin" | "register" | "forgot";
 export default function LoginPage() {
   const router = useRouter();
   const { currentUser, register, resetPassword, signIn } = useLocalAuth();
+  const { completedCount } = useAcademyProgress();
   const [mode, setMode] = useState<AuthMode>("signin");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -22,6 +34,18 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const totalLessons = courses.reduce(
+    (lessonCount, course) => lessonCount + course.lessons.length,
+    0
+  );
+  const completedLessons = currentUser
+    ? courses.reduce((count, course) => count + completedCount(course), 0)
+    : 0;
+  const overallProgress = Math.round((completedLessons / totalLessons) * 100);
+  const completedCourses = currentUser
+    ? courses.filter((course) => completedCount(course) === course.lessons.length)
+        .length
+    : 0;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -78,7 +102,12 @@ export default function LoginPage() {
           </div>
         </header>
 
-        <section className="grid flex-1 content-center gap-5 py-6">
+        <section
+          className={cn(
+            "grid flex-1 gap-5 py-6",
+            currentUser ? "content-start" : "content-center"
+          )}
+        >
           <div className="text-center">
             <div
               aria-hidden="true"
@@ -96,13 +125,114 @@ export default function LoginPage() {
           <Card className="rounded-lg border-0 bg-white py-0 shadow-sm ring-1 ring-black/6">
             <CardContent className="px-4 py-4">
               {currentUser ? (
-                <div className="text-center">
-                  <h2 className="text-xl font-semibold tracking-normal">
-                    You are signed in
-                  </h2>
-                  <p className="mt-2 text-sm leading-6 text-[#636366]">
-                    Continue as {currentUser.name}.
-                  </p>
+                <div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#0a84ff] text-base font-semibold text-white">
+                      {getInitials(currentUser.name)}
+                    </div>
+                    <div className="min-w-0">
+                      <h2 className="truncate text-xl font-semibold tracking-normal">
+                        {currentUser.name}
+                      </h2>
+                      <p className="truncate text-sm text-[#636366]">
+                        {currentUser.email}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 rounded-lg bg-[#f2f2f7] p-4">
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <p className="text-sm font-semibold text-[#636366]">
+                          Learning progress
+                        </p>
+                        <p className="mt-1 text-3xl font-semibold tracking-normal">
+                          {completedLessons}
+                          <span className="text-base text-[#8e8e93]">
+                            /{totalLessons}
+                          </span>
+                        </p>
+                      </div>
+                      <div className="flex size-14 items-center justify-center rounded-lg bg-[#e7f8ed] text-[#15803d]">
+                        <Sparkles className="size-7" />
+                      </div>
+                    </div>
+
+                    <div className="mt-4">
+                      <div className="mb-2 flex items-center justify-between text-xs font-semibold text-[#6e6e73]">
+                        <span>{overallProgress}% complete</span>
+                        <span>{completedCourses} courses finished</span>
+                      </div>
+                      <div className="h-2 overflow-hidden rounded-full bg-[#d1d1d6]">
+                        <div
+                          className="h-full rounded-full bg-[#34c759]"
+                          style={{ width: `${overallProgress}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 grid grid-cols-2 gap-3">
+                    <ProfileStat
+                      icon={<CheckCircle2 className="size-5" />}
+                      label="Lessons done"
+                      value={completedLessons}
+                    />
+                    <ProfileStat
+                      icon={<BookOpen className="size-5" />}
+                      label="Courses"
+                      value={`${completedCourses}/${courses.length}`}
+                    />
+                  </div>
+
+                  <div className="mt-5">
+                    <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-[#3a3a3c]">
+                      <BarChart3 className="size-4 text-[#0a66d1]" />
+                      Course progress
+                    </div>
+                    <div className="grid gap-3">
+                      {courses.map((course) => {
+                        const completed = completedCount(course);
+                        const progress = Math.round(
+                          (completed / course.lessons.length) * 100
+                        );
+
+                        return (
+                          <Link
+                            key={course.id}
+                            href={`/courses/${course.id}`}
+                            className="rounded-lg border border-[#e5e5ea] px-3 py-3 transition active:bg-[#f2f2f7]"
+                          >
+                            <div className="flex items-center justify-between gap-3">
+                              <div className="min-w-0">
+                                <p className="truncate text-sm font-semibold">
+                                  {course.title}
+                                </p>
+                                <p className="mt-1 text-xs font-medium text-[#6e6e73]">
+                                  {completed} of {course.lessons.length} lessons
+                                </p>
+                              </div>
+                              <span className="text-sm font-semibold text-[#0a66d1]">
+                                {progress}%
+                              </span>
+                            </div>
+                            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#e5e5ea]">
+                              <div
+                                className={cn(
+                                  "h-full rounded-full",
+                                  course.tone === "gold"
+                                    ? "bg-[#ff9f0a]"
+                                    : "bg-[#34c759]"
+                                )}
+                                style={{ width: `${progress}%` }}
+                              />
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+
                   <Button
                     asChild
                     className="mt-5 h-12 w-full rounded-lg bg-[#0a84ff] text-base font-semibold text-white hover:bg-[#006edb]"
@@ -267,5 +397,32 @@ export default function LoginPage() {
         </section>
       </div>
     </main>
+  );
+}
+
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
+
+function ProfileStat({
+  icon,
+  label,
+  value,
+}: {
+  icon: ReactNode;
+  label: string;
+  value: number | string;
+}) {
+  return (
+    <div className="rounded-lg border border-[#e5e5ea] px-3 py-3">
+      <div className="flex items-center gap-2 text-[#0a66d1]">{icon}</div>
+      <p className="mt-3 text-xl font-semibold tracking-normal">{value}</p>
+      <p className="mt-1 text-xs font-semibold text-[#6e6e73]">{label}</p>
+    </div>
   );
 }
