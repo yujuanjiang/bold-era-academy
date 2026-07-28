@@ -78,11 +78,17 @@ export function LearningDashboard({ courses }: { courses: Course[] }) {
                   >
                     <LogOut className="size-5" />
                   </Button>
-                  <Avatar size="lg" className="bg-[#0a84ff] text-white">
-                    <AvatarFallback className="bg-[#0a84ff] font-semibold text-white">
-                      {getInitials(currentUser?.name ?? "Builder")}
-                    </AvatarFallback>
-                  </Avatar>
+                  <Link
+                    href="/login"
+                    aria-label="Open profile"
+                    className="rounded-full outline-none transition active:scale-[0.98] focus-visible:ring-4 focus-visible:ring-[#0a84ff]/20"
+                  >
+                    <Avatar size="lg" className="bg-[#0a84ff] text-white">
+                      <AvatarFallback className="bg-[#0a84ff] font-semibold text-white">
+                        {getInitials(currentUser?.name ?? "Builder")}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Link>
                 </>
               ) : (
                 <Button

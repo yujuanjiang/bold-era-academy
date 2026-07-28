@@ -10,6 +10,7 @@ import {
   Lock,
   MessageSquare,
   PlayCircle,
+  RotateCcw,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -39,6 +40,10 @@ export function CourseDetail({ course }: { course: Course }) {
   const progress = Math.round((completed / availableLessons) * 100);
   const Icon = courseIcons[course.icon];
   const isGold = course.tone === "gold";
+  const isCourseComplete = isAuthenticated && completed === availableLessons;
+  const primaryLesson = isCourseComplete
+    ? course.lessons[0]
+    : firstAvailableLesson(course);
 
   return (
     <main className="min-h-dvh bg-[#f5f5f7] pb-[calc(5.25rem+var(--app-safe-bottom))] pt-[var(--app-safe-top)] text-[#1c1c1e] md:pb-0">
@@ -118,13 +123,17 @@ export function CourseDetail({ course }: { course: Course }) {
                 <Link
                   href={
                     isAuthenticated
-                      ? `/courses/${course.id}/lessons/${
-                          firstAvailableLesson(course).id
+                      ? `/courses/${course.id}/lessons/${primaryLesson.id}${
+                          isCourseComplete ? "?retake=1" : ""
                         }`
                       : "/login"
                   }
                 >
-                  {isAuthenticated ? "Continue" : "Sign in to start"}
+                  {isCourseComplete
+                    ? "Retake Course"
+                    : isAuthenticated
+                      ? "Continue"
+                      : "Sign in to start"}
                   <ArrowRight className="size-5" />
                 </Link>
               </Button>
@@ -227,7 +236,9 @@ function LessonRow({
         </p>
       </div>
 
-      {isUnlocked || !isAuthenticated ? (
+      {isComplete ? (
+        <RotateCcw className="size-5 text-[#15803d]" />
+      ) : isUnlocked || !isAuthenticated ? (
         <PlayCircle className="size-5 text-[#0a66d1]" />
       ) : (
         <Lock className="size-4 text-[#8e8e93]" />
@@ -243,5 +254,13 @@ function LessonRow({
     return content;
   }
 
-  return <Link href={`/courses/${course.id}/lessons/${lesson.id}`}>{content}</Link>;
+  return (
+    <Link
+      href={`/courses/${course.id}/lessons/${lesson.id}${
+        isComplete ? "?retake=1" : ""
+      }`}
+    >
+      {content}
+    </Link>
+  );
 }

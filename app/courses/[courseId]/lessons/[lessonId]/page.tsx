@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 import { AuthGate } from "@/components/auth/auth-gate";
 import { LessonCard } from "@/components/academy/lesson-card";
@@ -27,7 +28,9 @@ export default async function LessonPage({
 
   return (
     <AuthGate>
-      <LessonCard course={course} lesson={lesson} />
+      <Suspense fallback={null}>
+        <LessonCard course={course} lesson={lesson} />
+      </Suspense>
     </AuthGate>
   );
 }
