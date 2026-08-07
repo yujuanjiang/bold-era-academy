@@ -7,6 +7,7 @@ import {
   BarChart3,
   BookOpen,
   CheckCircle2,
+  LogOut,
   Mail,
   Sparkles,
   Trash2,
@@ -27,7 +28,7 @@ type AuthMode = "signin" | "register" | "forgot";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { currentUser, deleteAccount, register, resetPassword, signIn } =
+  const { currentUser, deleteAccount, register, resetPassword, signIn, signOut } =
     useLocalAuth();
   const { completedCount, isCourseEnrolled } = useAcademyProgress();
   const [mode, setMode] = useState<AuthMode>("signin");
@@ -37,6 +38,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
@@ -112,6 +114,15 @@ export default function LoginPage() {
     setIsDeleteOpen(false);
     setDeleteConfirmation("");
     setMessage("Your account has been deleted.");
+    router.push("/login");
+  }
+
+  async function handleSignOut() {
+    setError("");
+    setMessage("");
+    setIsSigningOut(true);
+    await signOut();
+    setIsSigningOut(false);
     router.push("/login");
   }
 
@@ -281,6 +292,17 @@ export default function LoginPage() {
                       Go to Today
                       <ArrowRight className="size-5" />
                     </Link>
+                  </Button>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="mt-3 h-12 w-full rounded-lg border-[#d1d1d6] bg-white text-base font-semibold text-[#1c1c1e] hover:bg-[#f2f2f7]"
+                    disabled={isSigningOut}
+                    onClick={handleSignOut}
+                  >
+                    <LogOut className="size-5" />
+                    {isSigningOut ? "Logging out..." : "Log out"}
                   </Button>
 
                   <div className="mt-5 rounded-lg border border-[#ffd6d3] bg-[#fff7f6] p-4">
