@@ -269,12 +269,48 @@ export function useLocalAuth() {
     return { ok: true };
   }
 
+  async function deleteAccount(): Promise<AuthResult> {
+    if (!supabase || !isSupabaseConfigured) {
+      return {
+        ok: false,
+        error: "Supabase is not configured yet.",
+      };
+    }
+
+    if (!session?.access_token) {
+      return {
+        ok: false,
+        error: "Please sign in again first.",
+      };
+    }
+
+    const { error } = await supabase.functions.invoke("delete-account", {
+      body: {},
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+
+    if (error) {
+      return {
+        ok: false,
+        error: error.message || "We could not delete this account.",
+      };
+    }
+
+    await supabase.auth.signOut();
+    setSession(null);
+
+    return { ok: true };
+  }
+
   async function signOut() {
     await supabase?.auth.signOut();
   }
 
   return {
     currentUser,
+    deleteAccount,
     isAuthenticated: Boolean(currentUser),
     isLoading,
     register,

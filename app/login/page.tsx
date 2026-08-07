@@ -3,11 +3,13 @@
 import {
   ArrowLeft,
   ArrowRight,
+  AlertTriangle,
   BarChart3,
   BookOpen,
   CheckCircle2,
   Mail,
   Sparkles,
+  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -25,7 +27,8 @@ type AuthMode = "signin" | "register" | "forgot";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { currentUser, register, resetPassword, signIn } = useLocalAuth();
+  const { currentUser, deleteAccount, register, resetPassword, signIn } =
+    useLocalAuth();
   const { completedCount, isCourseEnrolled } = useAcademyProgress();
   const [mode, setMode] = useState<AuthMode>("signin");
   const [name, setName] = useState("");
@@ -34,6 +37,9 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const enrolledCourses = currentUser
     ? courses.filter((course) => isCourseEnrolled(course.id))
     : [];
@@ -87,6 +93,26 @@ export default function LoginPage() {
     }
 
     router.push("/");
+  }
+
+  async function handleDeleteAccount() {
+    setError("");
+    setMessage("");
+    setIsDeletingAccount(true);
+
+    const result = await deleteAccount();
+
+    if (!result.ok) {
+      setError(result.error ?? "We could not delete this account.");
+      setIsDeletingAccount(false);
+      return;
+    }
+
+    setIsDeletingAccount(false);
+    setIsDeleteOpen(false);
+    setDeleteConfirmation("");
+    setMessage("Your account has been deleted.");
+    router.push("/login");
   }
 
   return (
@@ -256,6 +282,81 @@ export default function LoginPage() {
                       <ArrowRight className="size-5" />
                     </Link>
                   </Button>
+
+                  <div className="mt-5 rounded-lg border border-[#ffd6d3] bg-[#fff7f6] p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#fff1f0] text-[#b42318]">
+                        <AlertTriangle className="size-5" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-base font-semibold text-[#b42318]">
+                          Delete account
+                        </h3>
+                        <p className="mt-1 text-sm leading-6 text-[#7a271a]">
+                          Permanently delete your account, profile, enrollments,
+                          and saved lesson progress.
+                        </p>
+                      </div>
+                    </div>
+
+                    {!isDeleteOpen ? (
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        className="mt-4 h-11 w-full rounded-lg text-sm font-semibold"
+                        onClick={() => {
+                          setIsDeleteOpen(true);
+                          setDeleteConfirmation("");
+                        }}
+                      >
+                        <Trash2 className="size-4" />
+                        Delete my account
+                      </Button>
+                    ) : (
+                      <div className="mt-4 grid gap-3">
+                        <label className="block">
+                          <span className="text-sm font-semibold text-[#7a271a]">
+                            Type DELETE to confirm
+                          </span>
+                          <input
+                            value={deleteConfirmation}
+                            onChange={(event) =>
+                              setDeleteConfirmation(event.target.value)
+                            }
+                            className="mt-2 h-12 w-full rounded-lg border border-[#f4a29b] bg-white px-4 text-base outline-none transition focus:border-[#ff3b30] focus:ring-4 focus:ring-[#ff3b30]/14"
+                            placeholder="DELETE"
+                          />
+                        </label>
+                        <div className="grid grid-cols-2 gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="h-11 rounded-lg border-[#d1d1d6] bg-white text-[#1c1c1e]"
+                            disabled={isDeletingAccount}
+                            onClick={() => {
+                              setIsDeleteOpen(false);
+                              setDeleteConfirmation("");
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            className="h-11 rounded-lg text-sm font-semibold"
+                            disabled={
+                              deleteConfirmation !== "DELETE" ||
+                              isDeletingAccount
+                            }
+                            onClick={handleDeleteAccount}
+                          >
+                            <Trash2 className="size-4" />
+                            {isDeletingAccount ? "Deleting..." : "Confirm"}
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ) : (
                 <>
