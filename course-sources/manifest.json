@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "title": "Bold Era Academy Course Sources",
+  "description": "Master source archive for course originals, chapter drafts, metadata, and resource origins. Each chapter keeps content and provenance in one Markdown source file.",
+  "created_date": "2026-08-11",
+  "source_snapshot": "lib/academy-data.ts",
+  "courses": [
+    {
+      "id": "ai-for-everyone",
+      "title": "AI for Everyone",
+      "directory": "./ai-for-everyone",
+      "chapters": [
+        {
+          "id": "core-concepts",
+          "title": "Core Concepts",
+          "directory": "./ai-for-everyone/core-concepts",
+          "source_file": "./ai-for-everyone/core-concepts/source.md"
+        },
+        {
+          "id": "prompt-101",
+          "title": "Prompt 101",
+          "directory": "./ai-for-everyone/prompt-101",
+          "source_file": "./ai-for-everyone/prompt-101/source.md"
+        },
+        {
+          "id": "common-questions",
+          "title": "Common Questions",
+          "directory": "./ai-for-everyone/common-questions",
+          "source_file": "./ai-for-everyone/common-questions/source.md"
+        },
+        {
+          "id": "analogies-and-myths",
+          "title": "Analogies & Myths",
+          "directory": "./ai-for-everyone/analogies-and-myths",
+          "source_file": "./ai-for-everyone/analogies-and-myths/source.md"
+        }
+      ],
+      "source_file": "./ai-for-everyone/course.md"
+    },
+    {
+      "id": "ai-for-entrepreneurs",
+      "title": "AI for Entrepreneurs",
+      "directory": "./ai-for-entrepreneurs",
+      "chapters": [
+        {
+          "id": "business-foundations",
+          "title": "Business Foundations",
+          "directory": "./ai-for-entrepreneurs/business-foundations",
+          "source_file": "./ai-for-entrepreneurs/business-foundations/source.md"
+        },
+        {
+          "id": "business-faqs",
+          "title": "Business FAQs",
+          "directory": "./ai-for-entrepreneurs/business-faqs",
+          "source_file": "./ai-for-entrepreneurs/business-faqs/source.md"
+        },
+        {
+          "id": "business-analogies",
+          "title": "Analogies & Myths",
+          "directory": "./ai-for-entrepreneurs/business-analogies",
+          "source_file": "./ai-for-entrepreneurs/business-analogies/source.md"
+        }
+      ],
+      "source_file": "./ai-for-entrepreneurs/course.md"
+    },
+    {
+      "id": "build-ai-agent",
+      "title": "Build Your First AI Agent",
+      "directory": "./build-ai-agent",
+      "chapters": [
+        {
+          "id": "agent-concepts",
+          "title": "Agent Concepts",
+          "directory": "./build-ai-agent/agent-concepts",
+          "source_file": "./build-ai-agent/agent-concepts/source.md"
+        },
+        {
+          "id": "agent-faqs",
+          "title": "Building Your Agent",
+          "directory": "./build-ai-agent/agent-faqs",
+          "source_file": "./build-ai-agent/agent-faqs/source.md"
+        },
+        {
+          "id": "agent-analogies",
+          "title": "Analogies & Myths",
+          "directory": "./build-ai-agent/agent-analogies",
+          "source_file": "./build-ai-agent/agent-analogies/source.md"
+        }
+      ],
+      "source_file": "./build-ai-agent/course.md"
+    },
+    {
+      "id": "create-ai-skill",
+      "title": "Create Your First AI Skill",
+      "directory": "./create-ai-skill",
+      "chapters": [
+        {
+          "id": "skill-concepts",
+          "title": "Skill Concepts",
+          "directory": "./create-ai-skill/skill-concepts",
+          "source_file": "./create-ai-skill/skill-concepts/source.md"
+        },
+        {
+          "id": "skill-faqs",
+          "title": "Building Your Skill",
+          "directory": "./create-ai-skill/skill-faqs",
+          "source_file": "./create-ai-skill/skill-faqs/source.md"
+        },
+        {
+          "id": "skill-analogies",
+          "title": "Analogies & Myths",
+          "directory": "./create-ai-skill/skill-analogies",
+          "source_file": "./create-ai-skill/skill-analogies/source.md"
+        }
+      ],
+      "source_file": "./create-ai-skill/course.md"
+    },
+    {
+      "id": "ai-for-professionals",
+      "title": "AI for Professionals",
+      "directory": "./ai-for-professionals",
+      "chapters": [
+        {
+          "id": "professional-foundations",
+          "title": "Professional Foundations",
+          "directory": "./ai-for-professionals/professional-foundations",
+          "source_file": "./ai-for-professionals/professional-foundations/source.md"
+        },
+        {
+          "id": "professional-faqs",
+          "title": "Professional FAQs",
+          "directory": "./ai-for-professionals/professional-faqs",
+          "source_file": "./ai-for-professionals/professional-faqs/source.md"
+        },
+        {
+          "id": "professional-analogies",
+          "title": "Analogies & Myths",
+          "directory": "./ai-for-professionals/professional-analogies",
+          "source_file": "./ai-for-professionals/professional-analogies/source.md"
+        }
+      ],
+      "source_file": "./ai-for-professionals/course.md"
+    },
+    {
+      "id": "ai-for-finance",
+      "title": "AI for Finance and Investing",
+      "directory": "./ai-for-finance",
+      "chapters": [
+        {
+          "id": "finance-foundations",
+          "title": "Finance Foundations",
+          "directory": "./ai-for-finance/finance-foundations",
+          "source_file": "./ai-for-finance/finance-foundations/source.md"
+        },
+        {
+          "id": "finance-faqs",
+          "title": "Investor FAQs",
+          "directory": "./ai-for-finance/finance-faqs",
+          "source_file": "./ai-for-finance/finance-faqs/source.md"
+        },
+        {
+          "id": "finance-analogies",
+          "title": "Analogies & Myths",
+          "directory": "./ai-for-finance/finance-analogies",
+          "source_file": "./ai-for-finance/finance-analogies/source.md"
+        }
+      ],
+      "source_file": "./ai-for-finance/course.md"
+    }
+  ],
+  "updated_date": "2026-08-11",
+  "chapter_file": "source.md",
+  "course_file": "course.md"
+}

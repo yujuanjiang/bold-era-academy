@@ -83,6 +83,56 @@ export const courses: Course[] = [
         ],
       },
       {
+        id: "prompt-101",
+        title: "Prompt 101",
+        summary: "Learn how to ask AI for clearer, safer, and more useful answers.",
+        kind: "lesson",
+        status: "locked",
+        xp: 10,
+        cards: [
+          {
+            title: "What is prompt engineering?",
+            body: "Prompt engineering means designing and improving the instructions you give an AI model so it better understands your goal and produces the kind of answer you want.",
+            takeaway: "Better prompts guide AI toward better answers.",
+          },
+          {
+            title: "What counts as a prompt?",
+            body: "A prompt is the input you give AI. It can be a simple question, a direct command, a set of steps, an example, a code snippet, or background information.",
+            takeaway: "A prompt is any input that guides the AI response.",
+          },
+          {
+            title: "Why does context matter?",
+            body: "Context helps AI understand the situation, audience, purpose, and constraints. Without context, the model has to guess what matters.",
+            takeaway: "Context reduces guesswork.",
+          },
+          {
+            title: "How do examples improve prompts?",
+            body: "Examples show the AI the pattern you want. One example can guide style, and several examples can teach format, tone, level of detail, or structure.",
+            takeaway: "Examples show what good output looks like.",
+          },
+          {
+            title: "What is zero-shot prompting?",
+            body: "Zero-shot prompting means asking directly without giving examples. It works well for simple tasks like summarizing, translating, listing ideas, or answering clear questions.",
+            takeaway: "Zero-shot means direct instruction, no examples.",
+          },
+          {
+            title: "What is few-shot prompting?",
+            body: "Few-shot prompting means giving a few input-output examples before the real request. This helps AI copy the pattern and produce a more predictable response.",
+            takeaway: "Few-shot prompting teaches by example.",
+          },
+          {
+            title: "How do you make a prompt specific?",
+            body: "Use action verbs, define the output format, name the audience, include important background, and break complex work into smaller steps.",
+            takeaway: "Specific prompts give AI a clearer target.",
+          },
+          {
+            title: "Why should you iterate?",
+            body: "Prompting is a cycle. Read the result, notice what is missing or unclear, then revise your prompt with more context, examples, limits, or format instructions.",
+            takeaway: "Prompting improves through feedback and revision.",
+          },
+        ],
+      },
+      {
         id: "common-questions",
         title: "Common Questions",
         summary: "Get honest answers to the questions most people have when starting with AI.",
