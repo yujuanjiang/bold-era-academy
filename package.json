@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "courses:export": "node scripts/export-course-content.mjs",
     "start": "next start",
     "ios:build": "next build && cap sync ios",
     "ios:open": "cap open ios",

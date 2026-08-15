@@ -14,11 +14,13 @@ import { useState } from "react";
 
 import { MobileTabBar } from "@/components/academy/mobile-tab-bar";
 import { useAcademyProgress } from "@/components/academy/use-academy-progress";
+import { useRemoteCourses } from "@/components/academy/use-remote-courses";
 import { useLocalAuth } from "@/components/auth/use-local-auth";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Course } from "@/lib/academy-data";
+import { lessonHref } from "@/lib/academy-routes";
 import { cn } from "@/lib/utils";
 
 const courseIcons = {
@@ -28,7 +30,12 @@ const courseIcons = {
   chart: BarChart3,
 };
 
-export function CourseCatalog({ courses }: { courses: Course[] }) {
+export function CourseCatalog({
+  courses: initialCourses,
+}: {
+  courses: Course[];
+}) {
+  const courses = useRemoteCourses(initialCourses);
   const {
     completedCount,
     enrollCourse,
@@ -194,7 +201,7 @@ function CatalogCourseCard({
               <Link
                 href={
                   isAuthenticated
-                    ? `/courses/${course.id}/lessons/${nextLessonId}`
+                    ? lessonHref(course.id, nextLessonId)
                     : "/login"
                 }
               >

@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { getLessonCards, type Course, type Lesson } from "@/lib/academy-data";
 import { cn } from "@/lib/utils";
 import { useAcademyProgress } from "./use-academy-progress";
+import { useRemoteCourses } from "./use-remote-courses";
 
 type LessonStep =
   | {
@@ -163,6 +164,12 @@ export function LessonCard({
   course: Course;
   lesson: Lesson;
 }) {
+  const courses = useRemoteCourses([course]);
+  const activeCourse =
+    courses.find((courseItem) => courseItem.id === course.id) ?? course;
+  const activeLesson =
+    activeCourse.lessons.find((lessonItem) => lessonItem.id === lesson.id) ??
+    lesson;
   const { completeLesson, isLessonComplete } = useAcademyProgress();
   const searchParams = useSearchParams();
   const isRetake = searchParams.get("retake") === "1";
@@ -171,10 +178,10 @@ export function LessonCard({
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>(
     {}
   );
-  const cards = getLessonCards(lesson);
+  const cards = getLessonCards(activeLesson);
   const steps = useMemo(
-    () => buildLessonSteps(course.id, lesson.id, cards),
-    [cards, course.id, lesson.id]
+    () => buildLessonSteps(activeCourse.id, activeLesson.id, cards),
+    [activeCourse.id, activeLesson.id, cards]
   );
   const activeStep = steps[activeStepIndex];
   const selectedAnswer =
@@ -184,9 +191,11 @@ export function LessonCard({
   const answeredCorrectly =
     (activeStep.type === "review" || activeStep.type === "chapter-quiz") &&
     selectedAnswer === activeStep.correctAnswer;
-  const lessonIndex = course.lessons.findIndex((item) => item.id === lesson.id);
-  const availableLessons = course.lessons.length;
-  const savedComplete = isLessonComplete(course.id, lesson);
+  const lessonIndex = activeCourse.lessons.findIndex(
+    (item) => item.id === activeLesson.id
+  );
+  const availableLessons = activeCourse.lessons.length;
+  const savedComplete = isLessonComplete(activeCourse.id, activeLesson);
   const isComplete = isRetake ? retakeFinished : savedComplete;
   const isLastStep = activeStepIndex === steps.length - 1;
   const canContinue =
@@ -215,13 +224,16 @@ export function LessonCard({
               size="icon-lg"
               className="rounded-lg text-white hover:bg-white/10"
             >
-              <Link href={`/courses/${course.id}`} aria-label="Back to course">
+              <Link
+                href={`/courses/${activeCourse.id}`}
+                aria-label="Back to course"
+              >
                 <ArrowLeft className="size-5" />
               </Link>
             </Button>
             <div className="min-w-0 text-center">
               <p className="truncate text-[1.05rem] font-semibold">
-                {lesson.title}
+                {activeLesson.title}
               </p>
               <p className="text-xs font-medium text-white/55">
                 Lesson {lessonIndex + 1} of {availableLessons}
@@ -247,7 +259,7 @@ export function LessonCard({
         <section className="grid flex-1 content-center gap-5 py-5">
           <div>
             <div className="flex items-center justify-between gap-3 text-sm font-semibold text-white/60">
-              <span>{course.title}</span>
+              <span>{activeCourse.title}</span>
               <span>{cardProgress}%</span>
             </div>
             <h1 className="mt-2 text-3xl font-semibold tracking-normal sm:text-4xl">
@@ -427,7 +439,7 @@ export function LessonCard({
               }
 
               if (!isComplete && isLastStep && canContinue) {
-                completeLesson(course.id, lesson.id);
+                completeLesson(activeCourse.id, activeLesson.id);
 
                 if (isRetake) {
                   setRetakeFinished(true);
@@ -442,7 +454,7 @@ export function LessonCard({
             )}
           >
             {isComplete ? (
-              <Link href={`/courses/${course.id}`}>
+              <Link href={`/courses/${activeCourse.id}`}>
                 Back to Course
                 <ArrowRight className="size-5" />
               </Link>
@@ -464,7 +476,7 @@ export function LessonCard({
           </Button>
           <div className="flex h-13 min-w-20 items-center justify-center gap-1.5 rounded-lg bg-white/10 px-3 text-sm font-semibold text-white">
             <CheckCircle2 className="size-5 text-[#34c759]" />
-            +{lesson.xp}
+            +{activeLesson.xp}
           </div>
         </div>
       </div>

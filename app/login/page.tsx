@@ -18,6 +18,7 @@ import { FormEvent, useState } from "react";
 import type { ReactNode } from "react";
 
 import { useAcademyProgress } from "@/components/academy/use-academy-progress";
+import { useRemoteCourses } from "@/components/academy/use-remote-courses";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocalAuth } from "@/components/auth/use-local-auth";
@@ -27,6 +28,7 @@ import { cn } from "@/lib/utils";
 type AuthMode = "signin" | "register" | "forgot";
 
 export default function LoginPage() {
+  const courseList = useRemoteCourses(courses);
   const router = useRouter();
   const { currentUser, deleteAccount, register, resetPassword, signIn, signOut } =
     useLocalAuth();
@@ -43,7 +45,7 @@ export default function LoginPage() {
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const enrolledCourses = currentUser
-    ? courses.filter((course) => isCourseEnrolled(course.id))
+    ? courseList.filter((course) => isCourseEnrolled(course.id))
     : [];
   const totalLessons = enrolledCourses.reduce(
     (lessonCount, course) => lessonCount + course.lessons.length,

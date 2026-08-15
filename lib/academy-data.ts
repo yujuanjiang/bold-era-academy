@@ -33,7 +33,7 @@ export const currentLesson = {
   lessonId: "core-concepts",
 };
 
-export const courses: Course[] = [
+const courseCatalog: Course[] = [
   // ── 1. AI for Everyone ──────────────────────────────────────────────────────
   {
     id: "ai-for-everyone",
@@ -336,121 +336,261 @@ export const courses: Course[] = [
     ],
   },
 
-  // ── 3. Step-By-Step: Build Your First AI Agent in 5 Minutes ────────────────
+  // ── 3. Build Your First AI Agent ───────────────────────────────────────────
   {
     id: "build-ai-agent",
     title: "Build Your First AI Agent",
-    description: "Step-by-step: understand and build a simple AI agent in 5 minutes.",
+    description: "Learn what AI agents are, how they work, and how to design one safely.",
     tone: "purple",
     icon: "bot",
     lessons: [
       {
-        id: "agent-concepts",
-        title: "Agent Concepts",
-        summary: "Learn what an AI agent is, what it needs, and how it differs from a chatbot.",
+        id: "agent-basics",
+        title: "Agent Basics",
+        summary: "Understand what an AI agent is and how it differs from a regular chatbot.",
         kind: "lesson",
         status: "current",
         xp: 10,
         cards: [
           {
-            title: "What makes an AI agent different?",
-            body: "An AI agent can follow a goal, use tools, and take steps toward an outcome. A normal chatbot mostly responds to one message at a time.",
-            takeaway: "Agents pursue goals — chatbots respond to messages.",
+            title: "What is an AI agent?",
+            body: "An AI agent is a system that uses AI to work toward a goal. Instead of only answering one message, it can follow steps, use tools, and check progress.",
+            takeaway: "An agent is AI working toward a goal.",
           },
           {
-            title: "What are the basic parts of an agent?",
-            body: "A simple agent needs a goal, instructions, a model, tools, and a way to return results. More advanced agents may also use memory and safety checks.",
-            takeaway: "Goal + instructions + model + tools = agent.",
+            title: "How is an agent different from a chatbot?",
+            body: "A chatbot usually responds to what you type. An agent can take a goal, decide the next step, use a tool, and keep going until the task is done or needs help.",
+            takeaway: "Chatbots respond; agents work through steps.",
           },
           {
-            title: "What is an agent goal?",
-            body: "An agent goal tells the agent what outcome to work toward. A good goal is specific enough to guide action and simple enough to evaluate.",
-            takeaway: "Specific goals produce predictable agents.",
+            title: "What makes agents useful?",
+            body: "Agents are useful when a task has repeated steps, clear inputs, and a result you can review. They can help with research, summaries, planning, support, and routine operations.",
+            takeaway: "Agents fit tasks with steps and reviewable results.",
           },
           {
-            title: "Why do agents need tools?",
-            body: "Tools let an agent do things beyond writing text, such as searching, reading files, calling apps, or calculating. Without tools, the agent mainly generates responses.",
-            takeaway: "Tools turn responses into actions.",
+            title: "What does autonomy mean?",
+            body: "Autonomy means the agent can make some decisions about what to do next. More autonomy can save time, but it also needs clearer rules and stronger review.",
+            takeaway: "More autonomy needs stronger guardrails.",
           },
           {
-            title: "What is the simplest useful agent?",
-            body: "A simple useful agent handles one clear task, such as summarizing notes, drafting replies, or organizing research. Starting narrow makes it easier to trust and improve.",
-            takeaway: "Narrow agents are easier to trust and improve.",
+            title: "What is a simple agent example?",
+            body: "A meeting-notes agent could read notes, find decisions, list action items, and draft a follow-up message. A person still checks the message before sending.",
+            takeaway: "Simple agents turn messy input into useful output.",
           },
           {
-            title: "What should I test before trusting an agent?",
-            body: "Test normal cases, messy cases, and cases where it should refuse or ask for help. Good agents handle limits as well as successes.",
-            takeaway: "Test the edges, not just the easy cases.",
+            title: "Why start with one task?",
+            body: "One focused task is easier to describe, test, and improve. A broad agent can become confusing because success is not clear.",
+            takeaway: "One clear task is the best starting point.",
+          },
+          {
+            title: "What can go wrong?",
+            body: "An agent can misunderstand the goal, use the wrong information, skip a step, or take an action too soon. That is why beginners should keep human review in the loop.",
+            takeaway: "Agents need review before important actions.",
+          },
+          {
+            title: "What should a beginner remember?",
+            body: "An agent is not magic. It is a workflow with AI inside it. The clearer the task, tools, and approval rules, the more useful the agent becomes.",
+            takeaway: "Good agents come from good workflow design.",
           },
         ],
       },
       {
-        id: "agent-faqs",
-        title: "Building Your Agent",
-        summary: "Practical answers to get your first agent running safely and correctly.",
+        id: "goals-tools-actions",
+        title: "Goals, Tools, and Actions",
+        summary: "Learn the core building blocks every useful AI agent needs.",
         kind: "lesson",
         status: "locked",
         xp: 10,
         cards: [
           {
-            title: "Can I build an agent without coding?",
-            body: "Yes, many platforms offer no-code or low-code agent builders. You still need to define the goal, instructions, inputs, outputs, and review steps clearly.",
-            takeaway: "No code needed — but clear instructions are essential.",
+            title: "What is an agent goal?",
+            body: "The goal tells the agent what outcome to work toward. A strong goal is specific, useful, and easy to check when the work is finished.",
+            takeaway: "A good goal is specific and checkable.",
           },
           {
-            title: "What should my first agent do?",
-            body: "Choose a low-risk task with a clear result, like turning meeting notes into action items. Avoid tasks involving private data, money movement, or legal decisions first.",
-            takeaway: "Start low-risk with a clear, reviewable output.",
+            title: "What are agent instructions?",
+            body: "Instructions tell the agent how to behave. They can define the role, steps, tone, limits, output format, and when the agent should ask for help.",
+            takeaway: "Instructions turn a goal into behavior.",
           },
           {
-            title: "How do I know if my agent works?",
-            body: "Test it with a few realistic examples and compare results to what you expected. Look for accuracy, completeness, tone, and whether it follows instructions.",
-            takeaway: "Test with real examples — not just ideal ones.",
+            title: "What are tools?",
+            body: "Tools let an agent do things beyond writing text. A tool might search the web, read a file, update a spreadsheet, send an email, or call an app.",
+            takeaway: "Tools give agents real abilities.",
           },
           {
-            title: "Should my first agent act automatically?",
-            body: "For beginners, keep a human approval step before the agent sends, deletes, buys, or changes anything important. Automation should grow after trust is earned.",
-            takeaway: "Earn trust before removing human review.",
+            title: "What are actions?",
+            body: "Actions are the things an agent does with tools or outputs. Drafting a reply, creating a task, searching a source, and updating a record are all actions.",
+            takeaway: "Actions are how agents move work forward.",
           },
           {
-            title: "What instructions should I give an agent?",
-            body: "Tell it its role, goal, audience, limits, output format, and when to ask for help. Clear boundaries make agent behavior more predictable.",
-            takeaway: "Define role, goal, limits, and format upfront.",
+            title: "Why do agents need inputs?",
+            body: "Inputs give the agent the information it needs to start. Inputs can be a message, file, form, customer request, meeting note, or database record.",
+            takeaway: "Better inputs make better agent work possible.",
+          },
+          {
+            title: "What is an output format?",
+            body: "The output format tells the agent how to present the result. It might be a list, table, email draft, JSON object, checklist, or short summary.",
+            takeaway: "Output format makes results easier to use.",
+          },
+          {
+            title: "Why define limits?",
+            body: "Limits tell the agent what not to do. For example, do not send emails, do not invent facts, do not use private data, or ask before changing records.",
+            takeaway: "Limits keep agent behavior safer.",
+          },
+          {
+            title: "What makes a tool safe to use?",
+            body: "A safer tool has clear permissions, visible results, and a way for humans to approve important changes. Tools that change money, accounts, or private data need extra care.",
+            takeaway: "Powerful tools need careful permissions.",
           },
         ],
       },
       {
-        id: "agent-analogies",
-        title: "Analogies & Myths",
-        summary: "Clear up common misunderstandings about what AI agents can and cannot do.",
-        kind: "quiz",
+        id: "agent-workflows",
+        title: "Agent Workflows",
+        summary: "See how agents plan, act, check results, and improve through feedback.",
+        kind: "lesson",
+        status: "locked",
+        xp: 10,
+        cards: [
+          {
+            title: "What is an agent workflow?",
+            body: "An agent workflow is the path from request to result. It includes the trigger, input, steps, tools, checks, approvals, and final output.",
+            takeaway: "A workflow shows how the agent gets work done.",
+          },
+          {
+            title: "What is a trigger?",
+            body: "A trigger is what starts the agent. It could be a button click, new email, uploaded file, form submission, schedule, or manual request.",
+            takeaway: "The trigger starts the agent workflow.",
+          },
+          {
+            title: "How does an agent plan?",
+            body: "Planning means the agent breaks the goal into smaller steps. Simple agents may follow fixed steps, while more advanced agents may choose steps based on the situation.",
+            takeaway: "Planning turns a goal into steps.",
+          },
+          {
+            title: "How does an agent act?",
+            body: "The agent acts by using tools or producing outputs. It might search, read, draft, summarize, compare, classify, or create a next-step recommendation.",
+            takeaway: "Actions are the workflow steps in motion.",
+          },
+          {
+            title: "Why should an agent check its work?",
+            body: "Checking helps catch missing information, weak evidence, wrong format, or risky actions. A good workflow includes at least one review step before the final result.",
+            takeaway: "Checking turns output into trustworthy work.",
+          },
+          {
+            title: "What is a retry?",
+            body: "A retry happens when the agent notices a problem and tries again. For example, if search results are weak, it can search with better keywords.",
+            takeaway: "Retries help agents recover from weak results.",
+          },
+          {
+            title: "What is human-in-the-loop?",
+            body: "Human-in-the-loop means a person reviews or approves important steps. This is especially useful before sending messages, changing data, or making decisions.",
+            takeaway: "Human review keeps important steps controlled.",
+          },
+          {
+            title: "How do you improve a workflow?",
+            body: "Watch where the agent fails, then adjust the inputs, instructions, tools, examples, or approval steps. Agent design improves through testing.",
+            takeaway: "Better workflows come from testing and revision.",
+          },
+        ],
+      },
+      {
+        id: "human-approval-safety",
+        title: "Human Approval and Safety",
+        summary: "Learn when agents should ask permission and how to avoid risky mistakes.",
+        kind: "lesson",
+        status: "locked",
+        xp: 10,
+        cards: [
+          {
+            title: "Why does safety matter for agents?",
+            body: "Agents can do more than answer questions, so mistakes can have real effects. Safety rules help prevent wrong actions, privacy leaks, and confusing results.",
+            takeaway: "More action means more need for safety.",
+          },
+          {
+            title: "When should an agent ask first?",
+            body: "An agent should ask before sending messages, deleting files, spending money, changing records, sharing private data, or making high-impact recommendations.",
+            takeaway: "Ask before important or irreversible actions.",
+          },
+          {
+            title: "What data should stay protected?",
+            body: "Protect passwords, financial details, health information, customer data, private documents, contracts, and anything confidential to a person or business.",
+            takeaway: "Private data needs strict boundaries.",
+          },
+          {
+            title: "What is a guardrail?",
+            body: "A guardrail is a rule that limits what the agent can do. Guardrails can block unsafe requests, require approval, restrict tools, or force the agent to cite sources.",
+            takeaway: "Guardrails define what the agent must not do.",
+          },
+          {
+            title: "Why should agents show their work?",
+            body: "Showing sources, assumptions, or steps makes it easier for humans to review the result. It also helps you spot when the agent skipped something important.",
+            takeaway: "Visible reasoning makes review easier.",
+          },
+          {
+            title: "What is a safe first agent?",
+            body: "A safe first agent suggests or drafts work instead of taking final action. For example, it can draft an email but wait for you to send it.",
+            takeaway: "Draft-first agents are safer for beginners.",
+          },
+          {
+            title: "What should agents do when unsure?",
+            body: "A good agent should say when it is missing information, ask a clarifying question, or stop instead of guessing. Guessing can create confident mistakes.",
+            takeaway: "Good agents ask instead of guessing.",
+          },
+          {
+            title: "How do you test safety?",
+            body: "Test normal cases, messy cases, and unsafe requests. Make sure the agent succeeds when it should and refuses or asks for help when it should.",
+            takeaway: "Test both success and refusal behavior.",
+          },
+        ],
+      },
+      {
+        id: "design-your-first-agent",
+        title: "Design Your First Agent",
+        summary: "Use a simple template to design a useful agent for one real task.",
+        kind: "practice",
         status: "locked",
         xp: 15,
         cards: [
           {
-            title: "How is an agent like an assistant?",
-            body: "An agent can take a goal and work through steps instead of only answering one question. It still needs supervision, especially at first. It is like a new assistant who can work quickly but needs a clear brief and review.",
-            takeaway: "Capable but supervised — especially at the start.",
+            title: "Step 1: Pick one task",
+            body: "Choose one repeated task that is annoying, low-risk, and easy to review. Good examples include summarizing notes, drafting replies, or organizing research.",
+            takeaway: "Start with one repeated, low-risk task.",
           },
           {
-            title: "Why should my agent start with one task?",
-            body: "A narrow task is easier to test and improve. Broad agents are harder to control because success is unclear. It is like teaching someone one recipe before asking them to run the whole restaurant.",
-            takeaway: "One task first — then expand.",
+            title: "Step 2: Define success",
+            body: "Write what a good result looks like. Success could mean a clear summary, accurate action list, clean table, or draft that only needs light editing.",
+            takeaway: "Define success before building the agent.",
           },
           {
-            title: "What are tools in an agent?",
-            body: "Tools give the agent specific abilities it would not have from language alone. They turn advice into action. It is like giving a worker a phone, calendar, calculator, and filing cabinet.",
-            takeaway: "Tools are what give agents real-world reach.",
+            title: "Step 3: List the inputs",
+            body: "Name what the agent needs to begin. This might be meeting notes, customer questions, a document, a form, or a folder of research links.",
+            takeaway: "Inputs tell the agent where to start.",
           },
           {
-            title: "Is an agent always autonomous?",
-            body: "No, many useful agents are partially supervised. For beginners, the safest agents suggest actions and wait for human approval.",
-            takeaway: "Supervised agents are safer and still very useful.",
+            title: "Step 4: Choose tools",
+            body: "Pick only the tools needed for the task. A first agent may need no tools beyond reading text and drafting output. Add more tools later.",
+            takeaway: "Use the fewest tools that can solve the task.",
           },
           {
-            title: "Does a smarter model guarantee a better agent?",
-            body: "No, the model is only one part. Good instructions, useful tools, testing, and safety boundaries often matter just as much.",
-            takeaway: "Instructions and tools matter as much as the model.",
+            title: "Step 5: Write instructions",
+            body: "Tell the agent its role, goal, steps, limits, tone, and output format. Clear instructions make behavior easier to predict.",
+            takeaway: "Role, goal, steps, limits, and format guide the agent.",
+          },
+          {
+            title: "Step 6: Add approval points",
+            body: "Decide where a human should review the work. Approval is especially important before sending, publishing, deleting, buying, or changing records.",
+            takeaway: "Approval points control risky steps.",
+          },
+          {
+            title: "Step 7: Test examples",
+            body: "Run the agent on at least three realistic examples. Include one easy case, one messy case, and one case where the agent should ask for help.",
+            takeaway: "Three test cases reveal what to improve.",
+          },
+          {
+            title: "Step 8: Improve the agent",
+            body: "Use test results to update the instructions, examples, tools, and safety rules. A useful agent gets better through small revisions.",
+            takeaway: "Agent design improves one test at a time.",
           },
         ],
       },
@@ -830,6 +970,333 @@ export const courses: Course[] = [
     ],
   },
 ];
+
+const promptEngineeringBaseLesson = courseCatalog
+  .find((course) => course.id === "ai-for-everyone")
+  ?.lessons.find((lesson) => lesson.id === "prompt-101");
+
+const promptEngineeringCourse: Course = {
+  id: "prompt-engineering-101",
+  title: "Prompt Engineering 101",
+  description:
+    "Learn how to ask AI better questions, give useful context, and improve answers through iteration.",
+  tone: "purple",
+  icon: "message",
+  lessons: [
+    {
+      ...(promptEngineeringBaseLesson ?? {
+        title: "Prompt Foundations",
+        summary: "Learn what prompts are and why clear instructions matter.",
+        kind: "lesson" as const,
+        status: "current" as const,
+        xp: 10,
+      }),
+      id: "prompt-foundations",
+      title: "Prompt Foundations",
+      summary:
+        "Understand prompts, context, examples, and the habits that make AI easier to work with.",
+      status: "current",
+    },
+    {
+      id: "context-and-examples",
+      title: "Context and Examples",
+      summary:
+        "Use roles, goals, constraints, and examples to guide AI toward more useful answers.",
+      kind: "lesson",
+      status: "locked",
+      xp: 10,
+      cards: [
+        {
+          title: "Why does context change the answer?",
+          body: "AI responds based on the information you provide. If you explain the goal, audience, format, and constraints, the answer can become much more relevant.",
+          takeaway: "Better context creates better answers.",
+        },
+        {
+          title: "What does a role do in a prompt?",
+          body: "A role tells AI what perspective to use, such as tutor, editor, coach, analyst, or planner. It helps shape tone and focus.",
+          takeaway: "Roles guide the perspective.",
+        },
+        {
+          title: "Why mention the audience?",
+          body: "The same topic should sound different for beginners, customers, investors, students, or teammates. Naming the audience helps AI choose the right level.",
+          takeaway: "Audience controls the level.",
+        },
+        {
+          title: "How do examples help?",
+          body: "Examples show AI the style, structure, or quality you want. A short example can be clearer than a long explanation.",
+          takeaway: "Examples show the target.",
+        },
+        {
+          title: "What are constraints?",
+          body: "Constraints are limits such as length, tone, format, reading level, or things to avoid. They help AI produce something closer to your real need.",
+          takeaway: "Constraints make output usable.",
+        },
+        {
+          title: "What format should I request?",
+          body: "Ask for bullets, a table, a checklist, a script, a summary, or step-by-step instructions when the format matters.",
+          takeaway: "Ask for the shape you need.",
+        },
+        {
+          title: "When should I provide source material?",
+          body: "If accuracy matters, paste the relevant source text or facts. AI can then work from your material instead of guessing from general patterns.",
+          takeaway: "Source material reduces guessing.",
+        },
+        {
+          title: "What is a good context template?",
+          body: "A simple template is: goal, audience, context, constraints, examples, and output format. You do not need every part every time.",
+          takeaway: "Goal, audience, context, constraints, examples, format.",
+        },
+      ],
+    },
+    {
+      id: "iterate-and-improve",
+      title: "Iterate and Improve",
+      summary:
+        "Turn rough AI output into better work by asking for revisions, checks, and alternatives.",
+      kind: "lesson",
+      status: "locked",
+      xp: 15,
+      cards: [
+        {
+          title: "Why is the first answer rarely final?",
+          body: "AI often gives a useful starting point, not a finished result. Treat the first answer like a draft you can shape.",
+          takeaway: "The first answer is a draft.",
+        },
+        {
+          title: "How do I ask for a better version?",
+          body: "Name what should change: make it shorter, clearer, warmer, more specific, more practical, or more beginner-friendly.",
+          takeaway: "Specific revision requests work best.",
+        },
+        {
+          title: "Why ask AI to explain assumptions?",
+          body: "Assumptions reveal what AI guessed. Once you see them, you can correct missing context or spot weak reasoning.",
+          takeaway: "Assumptions reveal guesses.",
+        },
+        {
+          title: "How can AI compare options?",
+          body: "Ask for pros, cons, tradeoffs, and a recommendation. This is helpful when you need to make a decision, not just get text.",
+          takeaway: "Comparison helps decisions.",
+        },
+        {
+          title: "What does it mean to critique output?",
+          body: "You can ask AI to review its own answer for gaps, unclear claims, missing steps, or risks. Then use that critique to improve the result.",
+          takeaway: "Critique before you trust.",
+        },
+        {
+          title: "How do I avoid generic output?",
+          body: "Add details about your situation, voice, audience, and real constraints. Generic prompts often create generic answers.",
+          takeaway: "Specific inputs beat generic prompts.",
+        },
+        {
+          title: "When should I restart instead of revise?",
+          body: "If an answer goes in the wrong direction, rewrite the prompt with clearer context instead of trying to patch every issue.",
+          takeaway: "Restart when the direction is wrong.",
+        },
+        {
+          title: "What is the best prompting habit?",
+          body: "Keep a small library of prompts that work for repeated tasks. Improve them over time as you learn what produces useful results.",
+          takeaway: "Save and improve prompts that work.",
+        },
+      ],
+    },
+  ],
+};
+
+const vibeCodingCourse: Course = {
+  id: "vibe-coding-for-non-technical",
+  title: "Vibe Coding for Non-Technical Builders",
+  description:
+    "Learn how to turn ideas into simple apps and websites with AI, even if you do not code.",
+  tone: "gold",
+  icon: "bot",
+  lessons: [
+    {
+      id: "vibe-coding-basics",
+      title: "Vibe Coding Basics",
+      summary:
+        "Understand what vibe coding is, what AI can build, and how to start safely.",
+      kind: "lesson",
+      status: "current",
+      xp: 10,
+      cards: [
+        {
+          title: "What is vibe coding?",
+          body: "Vibe coding means describing what you want in plain language and using AI to help create, edit, and test code. You guide the direction while AI handles much of the technical typing.",
+          takeaway: "You guide the idea; AI helps with the code.",
+        },
+        {
+          title: "Do I need to know programming first?",
+          body: "You do not need to be a professional developer, but you do need to describe goals clearly, test carefully, and learn basic product logic.",
+          takeaway: "No coding background required, but testing matters.",
+        },
+        {
+          title: "What can I build first?",
+          body: "Start with a simple landing page, calculator, quiz, checklist, tracker, or small internal tool. Small projects teach faster.",
+          takeaway: "Small apps are the best first projects.",
+        },
+        {
+          title: "What is the builder's job?",
+          body: "Your job is to explain the user, the goal, the workflow, and what good looks like. AI needs direction to build the right thing.",
+          takeaway: "Define the product before asking for code.",
+        },
+        {
+          title: "Why should I avoid huge first builds?",
+          body: "Big apps hide too many decisions. A small version helps you learn what users need and what the app should do next.",
+          takeaway: "Build the smallest useful version first.",
+        },
+        {
+          title: "What should I test?",
+          body: "Click every button, try empty fields, use wrong inputs, resize the screen, and make sure the main workflow actually works.",
+          takeaway: "Testing is part of building.",
+        },
+        {
+          title: "What is a good AI coding prompt?",
+          body: "Describe the goal, target user, pages, actions, data, visual style, and success criteria. Then ask AI to implement one step at a time.",
+          takeaway: "Ask for one clear build step at a time.",
+        },
+        {
+          title: "What should beginners remember?",
+          body: "AI can move fast, but you still own the result. Review, test, simplify, and keep learning the basics as you build.",
+          takeaway: "Fast building still needs careful review.",
+        },
+      ],
+    },
+    {
+      id: "plan-your-first-build",
+      title: "Plan Your First Build",
+      summary:
+        "Turn a loose idea into screens, user flows, and a first version AI can help build.",
+      kind: "lesson",
+      status: "locked",
+      xp: 10,
+      cards: [
+        {
+          title: "What problem does the app solve?",
+          body: "Start by writing one sentence: this app helps this person do this task. If that sentence is unclear, the build will drift.",
+          takeaway: "One clear problem keeps the build focused.",
+        },
+        {
+          title: "Who is the user?",
+          body: "Describe the person using the app, what they know, what they need, and what might confuse them.",
+          takeaway: "Clear users create clear product decisions.",
+        },
+        {
+          title: "What is the main workflow?",
+          body: "Write the path a user takes from opening the app to getting value. This becomes your build checklist.",
+          takeaway: "Workflow first, decoration later.",
+        },
+        {
+          title: "How many screens do I need?",
+          body: "Most first versions need fewer screens than you think. Start with the screens required for the main workflow.",
+          takeaway: "Fewer screens are easier to finish.",
+        },
+        {
+          title: "What data does the app need?",
+          body: "List the information users enter, what the app stores, and what the app displays back.",
+          takeaway: "Data shapes the app.",
+        },
+        {
+          title: "What should the app not do yet?",
+          body: "Write a short not-now list. This protects the first version from becoming too large.",
+          takeaway: "A not-now list protects focus.",
+        },
+        {
+          title: "How do I describe visual style?",
+          body: "Use practical words like calm, playful, professional, minimal, dense, editorial, or mobile-first. Mention examples only if they help.",
+          takeaway: "Style words guide the interface.",
+        },
+        {
+          title: "What is done?",
+          body: "Define done as a testable outcome: a user can complete the main workflow without confusion or broken buttons.",
+          takeaway: "Done means the workflow works.",
+        },
+      ],
+    },
+    {
+      id: "test-and-ship",
+      title: "Test and Ship",
+      summary:
+        "Learn the beginner-friendly checklist for reviewing AI-built apps before sharing them.",
+      kind: "lesson",
+      status: "locked",
+      xp: 15,
+      cards: [
+        {
+          title: "Why test before sharing?",
+          body: "AI-built apps can look finished while hiding broken states. Testing protects users and your credibility.",
+          takeaway: "A polished look is not enough.",
+        },
+        {
+          title: "What is a happy path test?",
+          body: "A happy path test checks the normal user flow from start to finish. It answers: can the app do the main thing?",
+          takeaway: "Happy path tests the main thing.",
+        },
+        {
+          title: "What is an edge case?",
+          body: "An edge case is something unusual but possible, like empty input, long text, slow loading, or a user tapping twice.",
+          takeaway: "Edge cases reveal fragile spots.",
+        },
+        {
+          title: "Why test on mobile?",
+          body: "Many layouts that look good on desktop can break on a phone. Always check small screens if real users may use them.",
+          takeaway: "Mobile testing catches layout problems.",
+        },
+        {
+          title: "What should I ask AI to fix?",
+          body: "Give AI the exact issue, what you expected, what happened, and where it happened. Screenshots and error messages help.",
+          takeaway: "Specific bug reports get better fixes.",
+        },
+        {
+          title: "How do I avoid breaking working features?",
+          body: "After a fix, retest the main workflow. A change in one place can accidentally affect another place.",
+          takeaway: "Retest after every important fix.",
+        },
+        {
+          title: "When is it ready to share?",
+          body: "Share when the main workflow works, content is clear, errors are handled, and the app feels understandable to a new user.",
+          takeaway: "Ready means usable by someone new.",
+        },
+        {
+          title: "What should I improve after launch?",
+          body: "Watch where users get confused, what they repeat, and what they request. Let real use guide the next version.",
+          takeaway: "User behavior guides version two.",
+        },
+      ],
+    },
+  ],
+};
+
+const courseDisplayOrder = [
+  "ai-for-everyone",
+  "build-ai-agent",
+  "create-ai-skill",
+  "prompt-engineering-101",
+  "vibe-coding-for-non-technical",
+  "ai-for-professionals",
+];
+
+export const courses: Course[] = courseDisplayOrder
+  .map((courseId) => {
+    if (courseId === promptEngineeringCourse.id) {
+      return promptEngineeringCourse;
+    }
+
+    if (courseId === vibeCodingCourse.id) {
+      return vibeCodingCourse;
+    }
+
+    const course = courseCatalog.find((item) => item.id === courseId);
+
+    if (course?.id === "ai-for-everyone") {
+      return {
+        ...course,
+        lessons: course.lessons.filter((lesson) => lesson.id !== "prompt-101"),
+      };
+    }
+
+    return course;
+  })
+  .filter((course): course is Course => Boolean(course));
 
 export function getCourse(courseId: string) {
   return courses.find((course) => course.id === courseId);

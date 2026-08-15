@@ -17,12 +17,14 @@ import { useState } from "react";
 
 import { MobileTabBar } from "@/components/academy/mobile-tab-bar";
 import { useAcademyProgress } from "@/components/academy/use-academy-progress";
+import { useRemoteCourses } from "@/components/academy/use-remote-courses";
 import { useLocalAuth } from "@/components/auth/use-local-auth";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Course } from "@/lib/academy-data";
+import { lessonHref } from "@/lib/academy-routes";
 import { cn } from "@/lib/utils";
 
 const courseIcons = {
@@ -32,7 +34,12 @@ const courseIcons = {
   chart: BarChart3,
 };
 
-export function LearningDashboard({ courses }: { courses: Course[] }) {
+export function LearningDashboard({
+  courses: initialCourses,
+}: {
+  courses: Course[];
+}) {
+  const courses = useRemoteCourses(initialCourses);
   const {
     completedCount,
     enrollCourse,
@@ -160,7 +167,7 @@ export function LearningDashboard({ courses }: { courses: Course[] }) {
                     <Link
                       href={
                         isAuthenticated
-                          ? `/courses/${continueCourse.id}/lessons/${continueLesson.id}`
+                          ? lessonHref(continueCourse.id, continueLesson.id)
                           : "/login"
                       }
                     >
@@ -382,7 +389,7 @@ function CourseCard({
             <Link
               href={
                 isAuthenticated
-                  ? `/courses/${course.id}/lessons/${nextLessonId}`
+                  ? lessonHref(course.id, nextLessonId)
                   : "/login"
               }
             >

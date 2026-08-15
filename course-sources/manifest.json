@@ -69,22 +69,34 @@
       "directory": "./build-ai-agent",
       "chapters": [
         {
-          "id": "agent-concepts",
-          "title": "Agent Concepts",
-          "directory": "./build-ai-agent/agent-concepts",
-          "source_file": "./build-ai-agent/agent-concepts/source.md"
+          "id": "agent-basics",
+          "title": "Agent Basics",
+          "directory": "./build-ai-agent/agent-basics",
+          "source_file": "./build-ai-agent/agent-basics/source.md"
         },
         {
-          "id": "agent-faqs",
-          "title": "Building Your Agent",
-          "directory": "./build-ai-agent/agent-faqs",
-          "source_file": "./build-ai-agent/agent-faqs/source.md"
+          "id": "goals-tools-actions",
+          "title": "Goals, Tools, and Actions",
+          "directory": "./build-ai-agent/goals-tools-actions",
+          "source_file": "./build-ai-agent/goals-tools-actions/source.md"
         },
         {
-          "id": "agent-analogies",
-          "title": "Analogies & Myths",
-          "directory": "./build-ai-agent/agent-analogies",
-          "source_file": "./build-ai-agent/agent-analogies/source.md"
+          "id": "agent-workflows",
+          "title": "Agent Workflows",
+          "directory": "./build-ai-agent/agent-workflows",
+          "source_file": "./build-ai-agent/agent-workflows/source.md"
+        },
+        {
+          "id": "human-approval-safety",
+          "title": "Human Approval and Safety",
+          "directory": "./build-ai-agent/human-approval-safety",
+          "source_file": "./build-ai-agent/human-approval-safety/source.md"
+        },
+        {
+          "id": "design-your-first-agent",
+          "title": "Design Your First Agent",
+          "directory": "./build-ai-agent/design-your-first-agent",
+          "source_file": "./build-ai-agent/design-your-first-agent/source.md"
         }
       ],
       "source_file": "./build-ai-agent/course.md"
@@ -168,7 +180,7 @@
       "source_file": "./ai-for-finance/course.md"
     }
   ],
-  "updated_date": "2026-08-11",
+  "updated_date": "2026-08-15",
   "chapter_file": "source.md",
   "course_file": "course.md"
 }

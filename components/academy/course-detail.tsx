@@ -18,11 +18,13 @@ import { useState } from "react";
 
 import { MobileTabBar } from "@/components/academy/mobile-tab-bar";
 import { useAcademyProgress } from "@/components/academy/use-academy-progress";
+import { useRemoteCourses } from "@/components/academy/use-remote-courses";
 import { useLocalAuth } from "@/components/auth/use-local-auth";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Course, Lesson } from "@/lib/academy-data";
+import { lessonHref } from "@/lib/academy-routes";
 import { cn } from "@/lib/utils";
 
 const courseIcons = {
@@ -32,7 +34,11 @@ const courseIcons = {
   chart: BarChart3,
 };
 
-export function CourseDetail({ course }: { course: Course }) {
+export function CourseDetail({ course: initialCourse }: { course: Course }) {
+  const courses = useRemoteCourses([initialCourse]);
+  const course =
+    courses.find((courseItem) => courseItem.id === initialCourse.id) ??
+    initialCourse;
   const {
     completedCount,
     enrollCourse,
@@ -154,9 +160,9 @@ export function CourseDetail({ course }: { course: Course }) {
                   <Link
                     href={
                       isAuthenticated
-                        ? `/courses/${course.id}/lessons/${primaryLesson.id}${
-                            isCourseComplete ? "?retake=1" : ""
-                          }`
+                        ? lessonHref(course.id, primaryLesson.id, {
+                            retake: isCourseComplete,
+                          })
                         : "/login"
                     }
                   >
@@ -298,11 +304,7 @@ function LessonRow({
   }
 
   return (
-    <Link
-      href={`/courses/${course.id}/lessons/${lesson.id}${
-        isComplete ? "?retake=1" : ""
-      }`}
-    >
+    <Link href={lessonHref(course.id, lesson.id, { retake: isComplete })}>
       {content}
     </Link>
   );
