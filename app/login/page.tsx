@@ -69,34 +69,41 @@ export default function LoginPage() {
     setMessage("");
     setIsSubmitting(true);
 
-    if (mode === "forgot") {
-      const result = await resetPassword(email);
+    try {
+      if (mode === "forgot") {
+        const result = await resetPassword(email);
 
-      if (!result.ok) {
-        setError(result.error ?? "Something went wrong.");
-        setIsSubmitting(false);
+        if (!result.ok) {
+          setError(result.error ?? "Something went wrong.");
+          return;
+        }
+
+        setMessage(
+          "If an account exists for this email, a password reset link has been sent."
+        );
         return;
       }
 
-      setMessage(
-        "If an account exists for this email, a password reset link has been sent."
+      const result =
+        mode === "register"
+          ? await register({ name, email, password })
+          : await signIn({ email, password });
+
+      if (!result.ok) {
+        setError(result.error ?? "Something went wrong.");
+        return;
+      }
+
+      router.push("/");
+    } catch (caughtError) {
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Something went wrong. Please try again."
       );
+    } finally {
       setIsSubmitting(false);
-      return;
     }
-
-    const result =
-      mode === "register"
-        ? await register({ name, email, password })
-        : await signIn({ email, password });
-
-    if (!result.ok) {
-      setError(result.error ?? "Something went wrong.");
-      setIsSubmitting(false);
-      return;
-    }
-
-    router.push("/");
   }
 
   async function handleDeleteAccount() {
